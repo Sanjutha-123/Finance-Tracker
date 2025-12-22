@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FinanceTrackerApi", "FinanceTrackerApi\FinanceTrackerApi.csproj", "{4110D9AD-4ABB-F361-D7B8-371B22108ED4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4110D9AD-4ABB-F361-D7B8-371B22108ED4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4110D9AD-4ABB-F361-D7B8-371B22108ED4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4110D9AD-4ABB-F361-D7B8-371B22108ED4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4110D9AD-4ABB-F361-D7B8-371B22108ED4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C0C58C40-953D-44C9-A471-51FA8DC2B6DA}
+	EndGlobalSection
+EndGlobal
