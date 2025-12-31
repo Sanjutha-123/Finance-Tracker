@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using FinanceTrackerApi.Data;
+using System.Security.Claims;
 
 namespace FinanceTrackerApi.Controllers
 {
@@ -15,39 +16,49 @@ namespace FinanceTrackerApi.Controllers
             _context = context;
         }
 
+        // Helper to get logged-in user id
+        private int GetUserIdFromToken()
+        {
+            var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+            return claim == null ? 0 : int.Parse(claim.Value);
+        }
+
+        // GET: /api/monthlysummary?year=2025&month=12
         [HttpGet]
-        public async Task<IActionResult> GetMonthlySummary(
-        int userId,
-        int year,
-        int month)
-{
-    var startDate = new DateTime(year, month, 1);
-    var endDate = startDate.AddMonths(1);
+        public async Task<IActionResult> GetMonthlySummary(int year, int month)
+        {
+            int userId = 1;
+            if (userId == 0) return Unauthorized();
 
-    var transactions = await _context.Transactions
-        .Where(t =>
-            t.UserId == userId &&
-            t.Datetime2 >= startDate &&
-            t.Datetime2 < endDate)
-        .ToListAsync();
+            var startDate = new DateTime(year, month, 1);
+            var endDate = startDate.AddMonths(1);
 
-   var totalIncome = transactions
-    .Where(t => t.Type.ToLower() == "income")
-    .Sum(t => t.Amount);
+            var transactions = await _context.Transactions
+                .Where(t =>
+                    t.UserId == userId &&
+                    t.Datetime >= startDate &&
+                    t.Datetime < endDate)
+                .ToListAsync();
 
-   var totalExpense = transactions
-    .Where(t => t.Type.ToLower() == "expense")
-    .Sum(t => t.Amount);
+            var totalIncome = transactions
+                .Where(t => t.Type.ToLower() == "income")
+                .Sum(t => t.Amount);
 
-    return Ok(new
-    {
-        userId,
-        year,
-        month,
-        totalIncome,
-        totalExpense,
-        balance = totalIncome - totalExpense
-    });
-}
+            var totalExpense = transactions
+                .Where(t => t.Type.ToLower() == "expense")
+                .Sum(t => t.Amount);
+
+            var summary = new
+            {
+                userId,
+                year,
+                month,
+                totalIncome,
+                totalExpense,
+                balance = totalIncome - totalExpense
+            };
+
+            return Ok(summary);
+        }
     }
 }

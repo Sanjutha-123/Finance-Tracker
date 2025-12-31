@@ -4,27 +4,11 @@ namespace FinanceTrackerApi.Data
 {
     public interface ITransactionService
     {
-        Transaction AddTransaction(Transaction transaction);
-
-        Task<PagedResult<Transaction>> GetPagedAsync(
-            int pageNumber,
-            int pageSize,
-            string? sortBy,
-            string? sortDirection
-        );
-
-        Task<Transaction?> GetByIdAsync(int id);
-
-        bool UpdateTransaction(int id, Transaction updated);
-
-        bool DeleteTransaction(int id);
-
-        Task<List<Transaction>> Filter(
-            int userId,
-            DateTime? start,
-            DateTime? end,
-            string? category,
-            string? type
-        );
+        Task<Transaction> AddTransaction(TransactionDto dto, int userId);
+        Task<IEnumerable<Transaction>> GetPagedByUserAsync(int userId, int pageNumber, int pageSize, string? sortBy, string? sortDirection);
+        Task<Transaction?> GetByIdAsync(int id, int userId);
+        Task<bool> UpdateTransaction(int id, TransactionDto dto, int userId);
+        Task<bool> DeleteTransaction(int id, int userId);
+        Task<IEnumerable<Transaction>> Filter(int userId, DateTime? start, DateTime? end, int? categoryId, string? type);
     }
 }

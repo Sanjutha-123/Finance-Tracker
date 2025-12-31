@@ -1,13 +1,15 @@
 using FinanceTrackerApi.Models;
-using FinanceTrackerApi.Dtos;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace FinanceTrackerApi.Services
+namespace FinanceTrackerApi.Service
 {
     public interface ICategoryService
     {
-        Task<Category> CreateAsync(CategoryDto dto);
+        Task<IEnumerable<Category>> GetAllCategoriesAsync();
+        Task<Category> AddCategoryAsync(Category category);
+        Task<Category?> GetCategoryByIdAsync(int id);
         
-        Task<Category?> UpdateAsync(int id, CategoryDto dto);
-        Task<bool> DeleteAsync(int id);
+        Task SeedCategoriesAsync();
     }
 }

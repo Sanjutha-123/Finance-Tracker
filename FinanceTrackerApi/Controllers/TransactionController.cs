@@ -1,9 +1,7 @@
-
 using FinanceTrackerApi.Models;
 using FinanceTrackerApi.Data;
 using Microsoft.AspNetCore.Mvc;
-using System.Globalization;
-
+using System.Security.Claims;
 
 namespace FinanceTrackerApi.Controllers
 {
@@ -17,98 +15,114 @@ namespace FinanceTrackerApi.Controllers
         {
             _service = service;
         }
-        // ---------------------- CREATE ----------------------
-        [HttpPost("Add")]
-        public IActionResult Add([FromBody] Transaction t)
+
+        // Helper: Get logged-in user id from token
+        private int GetUserIdFromToken()
         {
-            // Validate Type as string
-            if (string.IsNullOrWhiteSpace(t.Type) ||
-                !(t.Type.ToLower() == "income" || t.Type.ToLower() == "expense"))
+            var claim = User.FindFirst(ClaimTypes.NameIdentifier);
+            return claim == null ? 0 : int.Parse(claim.Value);
+        }
+
+        // ---------------------- CREATE ----------------------
+        [HttpPost("add")]
+        public async Task<IActionResult> Add([FromBody] TransactionDto dto)
+        {
+            int userId = 1;
+            if (userId == 0)
+                return Unauthorized();
+
+            if (string.IsNullOrWhiteSpace(dto.Type) || 
+                !(dto.Type.ToLower() == "income" || dto.Type.ToLower() == "expense"))
             {
                 return BadRequest("Type must be either 'income' or 'expense'.");
             }
 
-            var result = _service.AddTransaction(t);
+            var result = await _service.AddTransaction(dto, userId); // pass userId
             return Ok(result);
         }
 
-        // ---------------------- GET BY USER ----------------------
-
+        // ---------------------- GET ALL USER TRANSACTIONS ----------------------
         [HttpGet]
-        public async Task<IActionResult> Get(int pageNumber = 1, int pageSize = 10, string? sortBy = "Datetime2",
-    string? sortDirection = "desc")
-
+        public async Task<IActionResult> Get(
+            int pageNumber = 1, 
+            int pageSize = 10, 
+            string? sortBy = "Datetime",
+            string? sortDirection = "desc")
         {
-            var result = await _service.GetPagedAsync(pageNumber, pageSize, sortBy, sortDirection);
+            int userId = 1;
+            if (userId == 0) return Unauthorized();
+
+            var result = await _service.GetPagedByUserAsync(userId, pageNumber, pageSize, sortBy, sortDirection);
             return Ok(result);
         }
 
-        //------------- GET /api/transactionsid/------------------------
+        // ---------------------- GET BY ID ----------------------
         [HttpGet("{id}")]
-        public async Task<IActionResult> Get(int id)
+        public async Task<IActionResult> GetById(int id)
         {
-            var transaction = await _service.GetByIdAsync(id);
+            int userId = 1;
+            if (userId == 0) return Unauthorized();
+
+            var transaction = await _service.GetByIdAsync(id, userId);
             if (transaction == null) return NotFound();
             return Ok(transaction);
         }
 
-
         // ---------------------- UPDATE ----------------------
-        [HttpPut("Update/{id}")]
-        public IActionResult Update(int id, [FromBody] Transaction t)
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] TransactionDto dto)
         {
-            // Validate Type as string
-            if (string.IsNullOrWhiteSpace(t.Type) ||
-                !(t.Type.ToLower() == "income" || t.Type.ToLower() == "expense"))
+            int userId = 1;
+            if (userId == 0) return Unauthorized();
+
+            if (string.IsNullOrWhiteSpace(dto.Type) || 
+                !(dto.Type.ToLower() == "income" || dto.Type.ToLower() == "expense"))
             {
                 return BadRequest("Type must be either 'income' or 'expense'.");
             }
 
-            bool ok = _service.UpdateTransaction(id, t);
-
-            if (!ok)
-                return NotFound("Transaction not found");
+            bool ok = await _service.UpdateTransaction(id, dto, userId);
+            if (!ok) return NotFound("Transaction not found");
 
             return Ok("Updated successfully");
         }
 
         // ---------------------- DELETE ----------------------
-        [HttpDelete("Delete/{id}")]
-        public IActionResult Delete(int id)
+        [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> Delete(int id)
         {
-            bool ok = _service.DeleteTransaction(id);
+            int userId = 1;
+            if (userId == 0) return Unauthorized();
 
-            if (!ok)
-                return NotFound("Transaction not found");
+            bool ok = await _service.DeleteTransaction(id, userId);
+            if (!ok) return NotFound("Transaction not found");
 
             return Ok("Deleted successfully");
         }
 
+        // ---------------------- FILTER ----------------------
         [HttpGet("filter")]
         public async Task<IActionResult> FilterTransactions(
-        [FromQuery] int userId,
-        [FromQuery] string? start,
-        [FromQuery] string? end,
-        [FromQuery] string? category,
-        [FromQuery] string? type)
+            [FromQuery] int? categoryId,
+            [FromQuery] string? start,
+            [FromQuery] string? end,
+            [FromQuery] string? type)
         {
+            int userId =1;
+            if (userId == 0) return Unauthorized();
+
             DateTime? startDate = null;
             DateTime? endDate = null;
 
             if (!string.IsNullOrEmpty(start))
-                startDate = DateTime.ParseExact(start, "dd-MM-yyyy", CultureInfo.InvariantCulture);
+                startDate = DateTime.ParseExact(start, "dd-MM-yyyy", null);
 
             if (!string.IsNullOrEmpty(end))
-                endDate = DateTime.ParseExact(end, "dd-MM-yyyy", CultureInfo.InvariantCulture)
-                                  .AddHours(23).AddMinutes(59).AddSeconds(59); // include full day
-            var data = await _service.Filter(userId, startDate, endDate, category, type);
-            return Ok(data);
+                endDate = DateTime.ParseExact(end, "dd-MM-yyyy", null)
+                                .AddHours(23).AddMinutes(59).AddSeconds(59);
 
+            var data = await _service.Filter(userId, startDate, endDate, categoryId, type);
+            return Ok(data);
         }
     }
 }
-
-
-
-
-

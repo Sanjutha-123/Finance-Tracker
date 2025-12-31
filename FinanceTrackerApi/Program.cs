@@ -4,7 +4,7 @@ using FinanceTrackerApi.Data;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
-using FinanceTrackerApi.Services;
+using FinanceTrackerApi.Service;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -31,7 +31,9 @@ builder.Services.AddSingleton<IJwtService, JwtService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
-builder.Services.AddScoped<MonthlySummaryService>();
+builder.Services.AddScoped<IMonthlySummaryService,MonthlySummaryService>();
+builder.Services.AddMemoryCache();
+
 
 // JWT Configuration
 var jwtSettings = builder.Configuration.GetSection("JwtSettings");
@@ -61,10 +63,15 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
-
+using (var scope = app.Services.CreateScope())
+{
+    var categoryService = scope.ServiceProvider.GetRequiredService<ICategoryService>();
+    await categoryService.SeedCategoriesAsync();
+}
 
 // Swagger
 if (app.Environment.IsDevelopment())

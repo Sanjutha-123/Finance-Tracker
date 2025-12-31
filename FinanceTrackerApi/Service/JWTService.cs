@@ -44,22 +44,18 @@ namespace FinanceTrackerApi.Service
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_accessSecret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        
+var claims = new[]
+{
+    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+    new Claim(ClaimTypes.Name, user.Username)
+};
 
-            var claims = new[]
-            {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Id.ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("username", user.Username)
-                // add role claims or other claims here
-            };
-
-            var token = new JwtSecurityToken(
-                issuer: _issuer,
-                audience: _audience,
-                claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_accessMinutes),
-                signingCredentials: creds
-            );
+var token = new JwtSecurityToken(
+    claims: claims,
+    expires: DateTime.UtcNow.AddMinutes(15),
+    signingCredentials: creds
+);
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
@@ -73,13 +69,9 @@ namespace FinanceTrackerApi.Service
             return Convert.ToBase64String(randomNumber);
         }
 
-        // Validate refresh token signature if you used JWT for refresh tokens.
-        // In this implementation refresh tokens are opaque strings (not JWT). If you prefer JWT for refresh tokens,
-        // implement validation similar to access tokens using _refreshSecret.
         public ClaimsPrincipal? ValidateRefreshToken(string token, bool validateLifetime = true)
         {
-            // If you're using opaque refresh tokens (recommended), you validate by looking up token in DB.
-            // Return null here — method included if you prefer JWT refresh tokens.
+          
             return null;
         }
     }

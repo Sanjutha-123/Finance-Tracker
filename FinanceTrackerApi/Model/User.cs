@@ -1,3 +1,5 @@
+
+
 namespace FinanceTrackerApi.Models
 {
     public class User
@@ -8,6 +10,8 @@ namespace FinanceTrackerApi.Models
         public string Password { get; set; } = null!;
         public string? RefreshToken { get; set; }           // store current refresh token
         public DateTime? RefreshTokenExpiry { get; set; }  // optional expiry tracking
-        public DateTime CreatedAt { get; internal set; }
+        public DateTime CreatedAt { get; set; }
+
+
     }
 }

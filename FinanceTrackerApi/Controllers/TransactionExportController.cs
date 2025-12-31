@@ -22,7 +22,7 @@ namespace FinanceTrackerApi.Controllers
         {
             var transactions = await _context.Transactions
                 .Where(t => t.UserId == userId)
-                .OrderBy(t => t.Datetime2)
+                .OrderBy(t => t.Datetime)
                 .ToListAsync();
 
             if (!transactions.Any())
@@ -34,7 +34,7 @@ namespace FinanceTrackerApi.Controllers
             foreach (var t in transactions)
             {
                 csv.AppendLine(
-                   $"{t.Id},{t.Type},{t.Amount},{t.Category},{t.Datetime2:yyyy-MM-dd}"
+                   $"{t.Id},{t.Type},{t.Amount},{t.CategoryId},{t.Datetime:yyyy-MM-dd}"
                 );
             }
 

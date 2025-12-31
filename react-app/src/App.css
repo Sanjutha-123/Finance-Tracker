@@ -1,0 +1,186 @@
+/* Body background */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: hsla(220, 44%, 68%, 0.875);
+  color: white;
+}
+
+/* ======= Common card styles ======= */
+.login-card,
+.register-card {
+  width: 90%;           /* responsive width */
+  max-width: 350px;     /* max width */
+  margin: 50px auto;    /* center on screen */
+  padding: 20px;        /* compact padding */
+  border-radius: 15px;
+  background-color: #031a3d;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  text-align: center;
+  box-sizing: border-box;
+}
+
+/* Logo */
+.login-card img,
+.register-card img {
+  height: 60px;       /* smaller logo */
+  width: 60px;
+  margin-bottom: 15px;
+}
+
+/* Heading */
+.login-card h2,
+.register-card h2 {
+  margin-bottom: 15px;
+  font-size: 22px;
+}
+
+/* Inputs */
+.login-card input,
+.register-card input {
+  display: block;         /* block element */
+  width: 100%;            /* full width inside card */
+  max-width: 300px;       /* slightly narrower than card */
+  padding: 10px;
+  margin: 6px auto;       /* center horizontally */
+  border-radius: 6px;
+  border: none;
+  background-color: #0d2b66;
+  color: white;
+  font-size: 15px;
+  box-sizing: border-box;
+  text-align: left;       /* text inside input aligned left */
+}
+
+.login-card input::placeholder,
+.register-card input::placeholder {
+  color: #bbb;
+}
+
+/* Remember & Forgot row */
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  margin: 8px 0;
+  font-size: 13px;
+}
+
+/* Remember Me */
+.remember-me {
+  display: flex;
+  align-items: center;
+}
+
+.remember-me input[type="checkbox"] {
+  width: auto;
+  margin-right: 6px;
+}
+
+
+/* Buttons */
+.login-btn,
+.google-btn {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px;
+  margin-top: 8px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Login button style */
+.login-btn {
+  background-color: #0e30a1;
+  color: white;
+}
+
+.login-btn:hover {
+  background-color: #9498a1;
+}
+
+
+
+/* Divider */
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 15px 0;
+  color: #888;
+}
+
+.divider hr {
+  flex: 1;
+  border: 0.5px solid #555;
+}
+
+.divider span {
+  margin: 0 10px;
+  font-size: 13px;
+}
+
+/* Paragraph links inside cards */
+.login-card p,
+.register-card p {
+  margin-top: 10px;
+  font-size: 14px;
+}
+
+/* Links */
+.login-card a,
+.register-card a {
+  color: #60a5fa;
+  text-decoration: none;
+}
+
+.login-card a:hover,
+.register-card a:hover {
+  text-decoration: underline;
+}
+
+/* ======= Responsive adjustments for small screens ======= */
+@media (max-width: 400px) {
+  .login-card,
+  .register-card {
+    padding: 15px;
+    margin: 30px auto;
+  }
+
+  .login-card img,
+  .register-card img {
+    height: 50px;
+    width: 50px;
+  }
+
+  .login-card h2,
+  .register-card h2 {
+    font-size: 18px;
+  }
+
+  .login-card input,
+  .login-card .login-btn,
+ 
+  .register-card input,
+  .register-card .login-btn,
+ 
+  .divider span {
+    font-size: 12px;
+  }
+
+  .login-options {
+    font-size: 12px;
+  }
+
+  .login-card p,
+  .register-card p {
+    font-size: 12px;
+  }
+}

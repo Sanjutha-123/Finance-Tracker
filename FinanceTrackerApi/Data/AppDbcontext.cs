@@ -27,6 +27,16 @@ namespace FinanceTrackerApi.Data
                   modelBuilder.Entity<Transaction>().ToTable("Transactions", "dbo")// schema name
                  .Property(t => t.Type)
                  .HasConversion<string>();
+
+
+
+       modelBuilder.Entity<Category>().HasData(
+        new Category { Id = 1, Name = "Salary" },
+        new Category { Id = 2, Name = "Food" },
+        new Category { Id = 3, Name = "Transport" },
+        new Category { Id = 4, Name = "Entertainment" },
+        new Category { Id = 5, Name = "Shoping" }
+    );
          
           base.OnModelCreating(modelBuilder);
             

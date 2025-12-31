@@ -24,7 +24,8 @@ namespace FinanceTrackerApi.Data
             {
                 Username = username,
                 Email = email,
-                Password = hashedPassword
+                Password = hashedPassword,
+                CreatedAt = DateTime.UtcNow 
             };
 
             _context.Users.Add(user);
@@ -39,11 +40,21 @@ namespace FinanceTrackerApi.Data
             email = email.Trim().ToLower();
 
             user = _context.Users.FirstOrDefault(u => u.Email == email);
-            if (user == null) return false;
 
-            // Compare hashed password
-            return BCrypt.Net.BCrypt.Verify(password, user.Password);
-        }
+      if (user != null)
+{
+      user.CreatedAt = user.CreatedAt.ToLocalTime();
+}
+
+            
+      if (user == null) return false;
+
+        
+
+ // Compare hashed password
+           return BCrypt.Net.BCrypt.Verify(password, user.Password);
+           
+ }
 
         // Save hashed refresh token
         public void SaveRefreshToken(int userId, string refreshToken, DateTime expiry)

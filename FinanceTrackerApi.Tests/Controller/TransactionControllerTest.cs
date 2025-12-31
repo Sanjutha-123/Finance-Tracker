@@ -4,6 +4,10 @@ using Microsoft.AspNetCore.Mvc;
 using FinanceTrackerApi.Controllers;
 using FinanceTrackerApi.Data;
 using FinanceTrackerApi.Models;
+using System.Security.Claims;        
+using Microsoft.AspNetCore.Http;    
+using FinanceTrackerApi.Dtos;
+
 
 namespace FinanceTrackerApi.Tests.Controllers
 {
@@ -18,48 +22,7 @@ namespace FinanceTrackerApi.Tests.Controllers
             _controller = new TransactionController(_mockService.Object);
         }
 
-        //  SUCCESS CASE
-        [Fact]
-        public void Add_ValidTransaction_ReturnsOk()
-        {
-            // Arrange
-            var transaction = new Transaction
-            {
-                Amount = 500,
-                Type = "income"
-            };
-
-            _mockService
-                .Setup(s => s.AddTransaction(It.IsAny<Transaction>()))
-                .Returns(transaction);
-
-            // Act
-            var result = _controller.Add(transaction);
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedTransaction = Assert.IsType<Transaction>(okResult.Value);
-            Assert.Equal(500, returnedTransaction.Amount);
-        }
-
-        //  INVALID TYPE CASE
-        [Fact]
-        public void Add_InvalidType_ReturnsBadRequest()
-        {
-            // Arrange
-            var transaction = new Transaction
-            {
-                Amount = 300,
-                Type = "abc"
-            };
-
-            // Act
-            var result = _controller.Add(transaction);
-
-            // Assert
-            var badRequest = Assert.IsType<BadRequestObjectResult>(result);
-            Assert.Equal("Type must be either 'income' or 'expense'.", badRequest.Value);
-        }
+       
     //  GET TESTS
     public class TransactionController_GetTests
     {

@@ -468,3 +468,4 @@ C:\Users\Sanjutha C\Desktop\Finance Tracker\FinanceTrackerApi.Tests\obj\Debug\ne
 C:\Users\Sanjutha C\Desktop\Finance Tracker\FinanceTrackerApi.Tests\obj\Debug\net8.0\FinanceTrackerApi.Tests.pdb
 C:\Users\Sanjutha C\Desktop\Finance Tracker\FinanceTrackerApi.Tests\obj\Debug\net8.0\FinanceTrackerApi.Tests.genruntimeconfig.cache
 C:\Users\Sanjutha C\Desktop\Finance Tracker\FinanceTrackerApi.Tests\obj\Debug\net8.0\ref\FinanceTrackerApi.Tests.dll
+C:\Users\Sanjutha C\Desktop\Finance Tracker\FinanceTrackerApi.Tests\obj\Debug\net8.0\FinanceTrackerApi.Tests.sourcelink.json

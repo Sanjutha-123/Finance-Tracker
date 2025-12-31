@@ -1,8 +1,10 @@
-using FinanceTrackerApi.Models;
-using FinanceTrackerApi.Dtos;
 using FinanceTrackerApi.Data;
+using FinanceTrackerApi.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace FinanceTrackerApi.Services
+namespace FinanceTrackerApi.Service
 {
     public class CategoryService : ICategoryService
     {
@@ -13,35 +15,46 @@ namespace FinanceTrackerApi.Services
             _context = context;
         }
 
-        public async Task<Category> CreateAsync(CategoryDto dto)
+        // Get all categories
+        public async Task<IEnumerable<Category>> GetAllCategoriesAsync()
         {
-            var category = new Category { Name = dto.Name, Type = dto.Type };
+            return await _context.Categories.ToListAsync();
+        }
+
+        // Add new category
+        public async Task<Category> AddCategoryAsync(Category category)
+        {
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
             return category;
         }
 
-         public async Task<Category?> UpdateAsync(int id, CategoryDto dto)
+        // Get category by ID
+        public async Task<Category?> GetCategoryByIdAsync(int id)
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null) return null;
-                    
-            category.Name = dto.Name;
-            category.Type = dto.Type;
-          
-
-            await _context.SaveChangesAsync();
-            return category;
+            return await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
         }
 
-        public async Task<bool> DeleteAsync(int id)
+    public async Task SeedCategoriesAsync()
         {
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null) return false;
+            if (await _context.Categories.AnyAsync()) return; // Already seeded
 
-            _context.Categories.Remove(category);
+            var categories = new List<Category>
+            {
+                new Category { Name = "Food" },
+                new Category { Name = "Transport" },
+                new Category { Name = "Entertainment" },
+                new Category { Name = "Shopping" },
+                new Category { Name = "Health" },
+                new Category { Name = "Utilities" },
+                new Category { Name = "Education" },
+                new Category { Name = "Freelance" },
+                new Category { Name = "Salary" },
+                new Category { Name = "Miscellaneous" }
+            };
+
+            _context.Categories.AddRange(categories);
             await _context.SaveChangesAsync();
-            return true;
         }
     }
 }
