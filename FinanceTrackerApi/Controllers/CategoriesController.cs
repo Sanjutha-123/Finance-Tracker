@@ -39,14 +39,20 @@ public CategoryController(ICategoryService service)
         // ---------------------- ADD CATEGORY ----------------------
         // POST: /api/category/add
         [HttpPost("add")]
-        public async Task<IActionResult> AddCategory([FromBody] Category category)
-        {
-            if (string.IsNullOrWhiteSpace(category.Name))
-                return BadRequest(new { message = "Category name is required" });
+public async Task<IActionResult> AddCategory([FromBody] Category category)
+{
+    if (string.IsNullOrWhiteSpace(category.Name))
+        return BadRequest(new { message = "Category name is required" });
+    if (string.IsNullOrWhiteSpace(category.Type) || 
+       !(category.Type.Equals("Income", StringComparison.OrdinalIgnoreCase) ||
+       category.Type.Equals("Expense", StringComparison.OrdinalIgnoreCase)))
+       category.Type = char.ToUpper(category.Type[0]) + category.Type.Substring(1).ToLower();
 
-            var addedCategory = await _service.AddCategoryAsync(category);
-            return Ok(addedCategory);
-        }
+
+    var addedCategory = await _service.AddCategoryAsync(category);
+    return Ok(addedCategory);
+}
+
     }
 }
 

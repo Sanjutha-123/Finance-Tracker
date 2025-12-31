@@ -3,26 +3,35 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../Api/auth.js";
 import "../App.css";
 
-export default function Login() {
+ function Login() {
   const [remember, setRemember] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const data = await login(email, password);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const data = await login(email, password);
-      // Save JWT token
-      localStorage.setItem("token", data.token);
-      // Redirect to dashboard
-      navigate("/dashboard");
-    } catch (err) {
-      setError(err.message);
+    // Adjust the key depending on backend
+     const token = data.token || data.accessToken || data.data?.token;
+    if (!token) {
+      setError("Login failed: no token returned");
+      return;
     }
-  };
+
+    // Save JWT token
+    localStorage.setItem("token", token);
+
+    // Redirect to dashboard
+    navigate("/dashboard");
+  } catch (err) {
+    setError(err.message);
+  }
+};
+
 
 
   return (
@@ -86,3 +95,4 @@ export default function Login() {
     </div>
   );
 }
+export default Login; 

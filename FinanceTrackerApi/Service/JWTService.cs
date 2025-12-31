@@ -44,21 +44,25 @@ namespace FinanceTrackerApi.Service
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_accessSecret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-        
-var claims = new[]
-{
-    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-    new Claim(ClaimTypes.Name, user.Username)
-};
 
-var token = new JwtSecurityToken(
-    claims: claims,
-    expires: DateTime.UtcNow.AddMinutes(15),
-    signingCredentials: creds
-);
+            // ✅ Use "id" claim so controller can extract userId
+            var claims = new[]
+            {
+                new Claim("id", user.Id.ToString()),       // user id
+                new Claim(ClaimTypes.Name, user.Username) // username
+            };
+
+            var token = new JwtSecurityToken(
+                issuer: _issuer,
+                audience: _audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(_accessMinutes),
+                signingCredentials: creds
+            );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
 
         // Create a cryptographically secure random refresh token (opaque)
         public string GenerateRefreshToken()

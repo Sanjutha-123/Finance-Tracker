@@ -1,126 +1,105 @@
-import React, { useEffect, useState } from "react";
-import api from "./api"; // import axios instance
+import { useEffect, useState } from "react";
+import { addTransaction, getCategories } from "../Api/auth";
+import "../TransactionCategory.css";
 
 const AddTransaction = () => {
+  const [amount, setAmount] = useState("");
+  const [type, setType] = useState("expense");
+  const [categoryId, setCategoryId] = useState("");
+  const [description, setDescription] = useState("");
   const [categories, setCategories] = useState([]);
-  const [formData, setFormData] = useState({
-    amount: "",
-    type: "income",
-    categoryId: "",
-    description: "",
-  });
-  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
 
-  // Fetch categories
+  // Load categories
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await api.get("/category/list");
-        setCategories(res.data);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
+        const data = await getCategories();
+        setCategories(data);
+      } catch {
+        setError("Failed to load categories");
       }
     };
     fetchCategories();
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
 
-    if (!formData.amount || !formData.categoryId) {
-      setMessage("Amount and Category are required.");
+    if (!amount || Number(amount) <= 0) {
+      setError("Please enter a valid amount");
+      return;
+    }
+
+    if (!categoryId) {
+      setError("Please select a category");
       return;
     }
 
     try {
-      await api.post("/transaction/add", {
-        amount: parseFloat(formData.amount),
-        type: formData.type,
-        categoryId: parseInt(formData.categoryId),
-        description: formData.description,
+      await addTransaction({
+          amount: Number(amount),
+          type: type === "expense" ? "Expense" : "Income",
+          categoryId: Number(categoryId),
+          description: description || ""
       });
-      setMessage("Transaction added successfully!");
-      setFormData({
-        amount: "",
-        type: "income",
-        categoryId: "",
-        description: "",
-      });
-    } catch (err) {
-      console.error(err);
-      setMessage("Error adding transaction.");
+
+      alert("Transaction added successfully ");
+
+      setAmount("");
+      setCategoryId("");
+      setDescription("");
+      setType("expense");
+    } catch {
+      setError("Failed to add transaction");
     }
   };
 
   return (
-    <div className="max-w-md mx-auto p-4">
-      <h2 className="text-xl font-bold mb-4">Add Transaction</h2>
-      {message && <p className="mb-4 text-green-600">{message}</p>}
+    <div className="card">
+      <h2>Add Transaction</h2>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label>Amount</label>
-          <input
-            type="number"
-            name="amount"
-            value={formData.amount}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-          />
-        </div>
+      {error && <p className="error">{error}</p>}
 
-        <div>
-          <label>Type</label>
-          <select
-            name="type"
-            value={formData.type}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-          >
-            <option value="income">Income</option>
-            <option value="expense">Expense</option>
-          </select>
-        </div>
+      <form onSubmit={handleSubmit}>
+        <label>Amount</label>
+        <input
+          type="number"
+          placeholder="Enter a amount"
+          value={amount}
+          min="1"
+          required
+          onChange={(e) => setAmount(e.target.value)}
+        />
 
-        <div>
-          <label>Category</label>
-          <select
-            name="categoryId"
-            value={formData.categoryId}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-          >
-            <option value="">Select category</option>
-            {categories
-              .filter((c) => c.type.toLowerCase() === formData.type)
-              .map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.name}
-                </option>
-              ))}
-          </select>
-        </div>
+        <label>Type</label>
+        <select value={type} onChange={(e) => setType(e.target.value)}>
+          <option value="expense">Expense</option>
+          <option value="income">Income</option>
+        </select>
 
-        <div>
-          <label>Description</label>
-          <input
-            type="text"
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full border p-2 rounded"
-          />
-        </div>
-
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-2 rounded"
+        <label>Category</label>
+        <select
+          value={categoryId}
+          onChange={(e) => setCategoryId(e.target.value)}
         >
+          <option value="">Select Category</option>
+          {categories.map((cat) => (
+            <option key={cat.id} value={cat.id}>
+              {cat.name}
+            </option>
+          ))}
+        </select>
+
+        <label>Note</label>
+        <textarea
+          placeholder="Optional note..."
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+        />
+
+        <button className="btn-primary" type="submit">
           Add Transaction
         </button>
       </form>

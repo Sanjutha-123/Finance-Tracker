@@ -27,7 +27,7 @@ namespace FinanceTrackerApi.Controllers
         [HttpGet]
         public async Task<IActionResult> GetMonthlySummary(int year, int month)
         {
-            int userId = 1;
+            int userId = GetUserIdFromToken();
             if (userId == 0) return Unauthorized();
 
             var startDate = new DateTime(year, month, 1);

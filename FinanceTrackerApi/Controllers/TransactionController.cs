@@ -2,11 +2,13 @@ using FinanceTrackerApi.Models;
 using FinanceTrackerApi.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace FinanceTrackerApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize] 
     public class TransactionController : ControllerBase
     {
         private readonly ITransactionService _service;
@@ -17,17 +19,19 @@ namespace FinanceTrackerApi.Controllers
         }
 
         // Helper: Get logged-in user id from token
-        private int GetUserIdFromToken()
-        {
-            var claim = User.FindFirst(ClaimTypes.NameIdentifier);
-            return claim == null ? 0 : int.Parse(claim.Value);
-        }
+    
+private int GetUserIdFromToken()
+{
+    var claim = User.FindFirst("id"); // ⚡ match JWT claim type
+    return claim == null ? 0 : int.Parse(claim.Value);
+}
+        
 
         // ---------------------- CREATE ----------------------
         [HttpPost("add")]
         public async Task<IActionResult> Add([FromBody] TransactionDto dto)
         {
-            int userId = 1;
+            int userId = GetUserIdFromToken();
             if (userId == 0)
                 return Unauthorized();
 
@@ -49,7 +53,7 @@ namespace FinanceTrackerApi.Controllers
             string? sortBy = "Datetime",
             string? sortDirection = "desc")
         {
-            int userId = 1;
+            int userId = GetUserIdFromToken();
             if (userId == 0) return Unauthorized();
 
             var result = await _service.GetPagedByUserAsync(userId, pageNumber, pageSize, sortBy, sortDirection);
@@ -60,7 +64,7 @@ namespace FinanceTrackerApi.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> GetById(int id)
         {
-            int userId = 1;
+            int userId = GetUserIdFromToken();
             if (userId == 0) return Unauthorized();
 
             var transaction = await _service.GetByIdAsync(id, userId);
@@ -72,7 +76,7 @@ namespace FinanceTrackerApi.Controllers
         [HttpPut("update/{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] TransactionDto dto)
         {
-            int userId = 1;
+            int userId = GetUserIdFromToken();
             if (userId == 0) return Unauthorized();
 
             if (string.IsNullOrWhiteSpace(dto.Type) || 
@@ -91,7 +95,7 @@ namespace FinanceTrackerApi.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            int userId = 1;
+            int userId = GetUserIdFromToken();
             if (userId == 0) return Unauthorized();
 
             bool ok = await _service.DeleteTransaction(id, userId);
@@ -108,7 +112,7 @@ namespace FinanceTrackerApi.Controllers
             [FromQuery] string? end,
             [FromQuery] string? type)
         {
-            int userId =1;
+            int userId =GetUserIdFromToken();
             if (userId == 0) return Unauthorized();
 
             DateTime? startDate = null;

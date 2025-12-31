@@ -24,9 +24,14 @@ namespace FinanceTrackerApi.Service
         // Add new category
         public async Task<Category> AddCategoryAsync(Category category)
         {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
-            return category;
+            var newCategory = new Category
+       {
+             Name = category.Name,
+             Type = category.Type // include the type
+       };
+             _context.Categories.Add(newCategory); 
+             await _context.SaveChangesAsync();
+             return newCategory;
         }
 
         // Get category by ID
@@ -41,16 +46,17 @@ namespace FinanceTrackerApi.Service
 
             var categories = new List<Category>
             {
-                new Category { Name = "Food" },
-                new Category { Name = "Transport" },
-                new Category { Name = "Entertainment" },
-                new Category { Name = "Shopping" },
-                new Category { Name = "Health" },
-                new Category { Name = "Utilities" },
-                new Category { Name = "Education" },
-                new Category { Name = "Freelance" },
-                new Category { Name = "Salary" },
-                new Category { Name = "Miscellaneous" }
+        new Category { Name = "Food", Type = "Expense" },
+        new Category { Name = "Transport", Type = "Expense" },
+        new Category { Name = "Entertainment", Type = "Expense" },
+        new Category { Name = "Shopping", Type = "Expense" },
+        new Category { Name = "Health", Type = "Expense" },
+        new Category { Name = "Utilities", Type = "Expense" },
+        new Category { Name = "Education", Type = "Expense" },
+        new Category { Name = "Freelance", Type = "Income" },
+        new Category { Name = "Salary", Type = "Income" },
+        new Category { Name = "Miscellaneous", Type = "Expense" }
+
             };
 
             _context.Categories.AddRange(categories);
