@@ -1,7 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import "../App.css";
+import "../Styles/auth.css";
+
 import { signup } from "../Api/auth";
+
+
 
 const Signup = () => {
   const [username, setUsername] = useState("");
@@ -26,12 +29,13 @@ const Signup = () => {
 
 
   return (
+ <div className="auth-page">
     <div className="register-card">
       <img
         src="https://cdn-icons-png.flaticon.com/512/5087/5087579.png"
         alt="Logo"
       />
-      <h1>Sign Up</h1>
+      <h1 className="signup-text">Signup</h1>
 
       {error && <p style={{ color: "red" }}>{error}</p>}
 
@@ -69,16 +73,16 @@ const Signup = () => {
         <hr />
       </div>
 
-      <p>
-        Already have an account?{" "}
-        <span
-          style={{ color: "cyan", cursor: "pointer" }}
-          onClick={() => navigate("/login")}
-        >
-          Login
-        </span>
+              <p className="account-text">
+          Already have an account?
+          <span className="link-text" onClick={() => navigate("/login")}>
+            {" "}Login
+          </span>
+
       </p>
     </div>
+    </div>
+  
   );
 };
 

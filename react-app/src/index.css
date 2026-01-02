@@ -1,81 +1,28 @@
-.signup-card {
-  background-color: #12264f;  /* same dark blue as login card */
-  width: 350px;
-  margin: 100px auto;
+/* ===== Page wrapper for centering card ===== */
+.page-wrapper {
+  height: 100vh;              /* full viewport height */
+  width: 100vw;               /* full viewport width */
+  display: flex;              /* flexbox layout */
+  justify-content: center;    /* center horizontally */
+  align-items: center;        /* center vertically */
+  background: linear-gradient(135deg, #4e54c8, #8f94fb); /* optional background */
+  padding: 20px;              /* optional padding */
+}
+
+/* ===== Card styling ===== */
+.card {
+  background: #ffffff;
   padding: 30px;
-  border-radius: 15px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-  text-align: center;
+  width: 400px;          /* card width */
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
 }
 
-/* Logo inside signup card */
-.signup-card img {
-  height: 80px;
-  width: 80px;
-  margin-bottom: 20px;
-}
-
-/* Heading */
-.signup-card h2 {
-  margin-bottom: 20px;
-}
-
-/* Inputs */
-.signup-card input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border-radius: 8px;
-  border: none;
-  background-color: #0d2b66;
-  color: white;
-}
-
-.signup-card input::placeholder {
-  color: #bbb;
-}
-
-/* Buttons */
-.signup-card .login-btn {
-  width: 100%;
-  padding: 12px;
-  margin-top: 10px;
-  border-radius: 8px;
-  border: none;
-  background-color: #1e40af;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.signup-card .login-btn:hover {
-  background-color: #9498a1;
-}
-
-
-/* Divider */
-.signup-card .divider {
-  display: flex;
-  align-items: center;
-  margin: 20px 0;
-  color: #888;
-}
-
-.signup-card .divider hr {
-  flex: 1;
-  border: 0.5px solid #555;
-}
-
-.signup-card .divider span {
-  margin: 0 10px;
-}
-
-/* Links */
-.signup-card a {
-  color: #60a5fa;
-  text-decoration: none;
-}
-
-.signup-card a:hover {
-  text-decoration: underline;
+/* Responsive: shrink card on mobile */
+@media (max-width: 768px) {
+  .card {
+    width: 90%;
+    padding: 20px;
+  }
 }

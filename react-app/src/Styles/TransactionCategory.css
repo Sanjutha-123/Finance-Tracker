@@ -1,0 +1,101 @@
+/* ===== GLOBAL RESET ===== */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  height: 100%;
+  width: 100%;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== PAGE WRAPPER WITH BACKGROUND ===== */
+.page-wrapper {
+  height: 100vh;              /* full viewport height */
+  width: 100vw;               /* full viewport width */
+  display: flex;
+  justify-content: center;    /* center horizontally */
+  align-items: center;        /* center vertically */
+  background: linear-gradient(135deg, #4e54c8, #8f94fb); /* gradient background */
+  /* OR use solid color: background: #9fb2d9; */
+  padding: 20px;
+}
+
+/* ===== CARD ===== */
+.card {
+  background: #ffffff;
+  padding: 30px;
+  width: 400px;
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* ===== HEADINGS ===== */
+.card h2 {
+  text-align: center;
+  font-size: 26px;
+  margin-bottom: 25px;
+  color: #333;
+}
+
+/* ===== FORM ELEMENTS ===== */
+label {
+  font-size: 14px;
+  font-weight: 500;
+  margin-top: 12px;
+  display: block;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 12px 15px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  transition: 0.3s;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: #4e54c8;
+  box-shadow: 0 0 5px rgba(78, 84, 200, 0.3);
+}
+
+textarea {
+  height: 80px;
+  resize: vertical;
+}
+
+/* ===== BUTTONS ===== */
+.btn-primary {
+  width: 100%;
+  padding: 14px;
+  margin-top: 20px;
+  border-radius: 8px;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #4e54c8;
+  color: #fff;
+  transition: 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #3b3fa6;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .card {
+    width: 90%;
+    padding: 20px;
+  }
+}

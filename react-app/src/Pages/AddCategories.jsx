@@ -1,10 +1,13 @@
 import { useState } from "react";
 import { addCategory } from "../Api/auth";
-import "../TransactionCategory.css";
+import "../Styles/TransactionCategory.css";
+
+import Sidebar from "../Components/Sidebar";
+
 
 const AddCategory = () => {
   const [name, setName] = useState("");
-  const [type, setType] = useState("Expense");
+  const [type, setType] = useState("Type");
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // prevent page reload if button is inside form
@@ -22,7 +25,7 @@ const AddCategory = () => {
       console.log("Category added:", result);
 
       setName(""); // reset form
-      setType("Expense"); // reset type to default
+      setType("Type"); // reset type to default
     } catch (error) {
   console.error("Failed to add category:", error.response?.data || error.message || error);
 }
@@ -30,13 +33,20 @@ const AddCategory = () => {
   };
 
   return (
+
+     <div className="layout">
+      {/* Sidebar */}
+      <Sidebar />
+     <div className="page-wrapper">
+     
     <div className="card">
       <h2>Add Category</h2>
+      
 
       <label>Category Name</label>
       <input
         type="text"
-        placeholder="Entertainment"
+        placeholder="Category Name"
         value={name}
         onChange={(e) => setName(e.target.value)}
       />
@@ -51,6 +61,9 @@ const AddCategory = () => {
   Add Category
 </button>
     </div>
+    </div>  
+     </div> 
+   
   );
 };
 

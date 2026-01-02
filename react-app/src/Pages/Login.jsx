@@ -1,98 +1,119 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, Link } from "react-router-dom";
 import { login } from "../Api/auth.js";
-import "../App.css";
+import "../Styles/auth.css";
+ // Make sure your CSS is in styles folder
 
- function Login() {
+function Login() {
   const [remember, setRemember] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const data = await login(email, password);
+  // Auto-fill remembered email if exists
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberEmail");
+    if (savedEmail) {
+      setEmail(savedEmail);
+      setRemember(true);
+    }
+  }, []);
 
-    // Adjust the key depending on backend
-     const token = data.token || data.accessToken || data.data?.token;
-    if (!token) {
-      setError("Login failed: no token returned");
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    if (!email || !password) {
+      setError("Please enter email and password");
       return;
     }
 
-    // Save JWT token
-    localStorage.setItem("token", token);
+    try {
+      const data = await login(email, password);
 
-    // Redirect to dashboard
-    navigate("/dashboard");
-  } catch (err) {
-    setError(err.message);
-  }
-};
+      const token = data.token || data.accessToken || data.data?.token;
+      if (!token) {
+        setError("Login failed: no token returned");
+        return;
+      }
 
+      // Save JWT token
+      localStorage.setItem("token", token);
 
+      // Save email if remember checked, else remove
+      if (remember) {
+        localStorage.setItem("rememberEmail", email);
+      } else {
+        localStorage.removeItem("rememberEmail");
+      }
+
+      // Navigate to dashboard
+      navigate("/dashboard");
+    } catch (err) {
+      setError(err.message || "Login failed");
+    }
+  };
 
   return (
-    <div className="login-card">
-      {/* Logo */}
-      <img
-        src="https://cdn-icons-png.flaticon.com/512/5087/5087579.png"
-        alt="App Logo"
-      />
+    <div className="auth-page">
+      <div className="login-card">
+        <img
+          src="https://cdn-icons-png.flaticon.com/512/5087/5087579.png"
+          alt="App Logo"
+        />
 
-      <h2>Login</h2>
+        <h1 className="login-text">Login</h1>
 
-      {/* Email */}
-       <form onSubmit={handleSubmit}>
-      <input
-        type="email"
-        placeholder="Email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        autoComplete="username"
-      />
-
-      {/* Password */}
-      <input
-        type="password"
-        placeholder="Password"
-        value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        autoComplete="current-password"
-      />
-
-      {/* Remember & error */}
-      <div className="login-options">
-        <label className="remember-me">
+        <form onSubmit={handleSubmit}>
           <input
-            type="checkbox"
-            checked={remember}
-            onChange={(e) => setRemember(e.target.checked)}
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            autoComplete="username"
+            required
           />
-          Remember
-        </label>
-        {error && <p style={{ color: "red", margin: 0 }}>{error}</p>}
-      </div>
 
-      {/* Login Button */}
-      <button className="login-btn" onClick={handleSubmit}>
-        Login
-      </button>
-</form>
-      {/* Divider */}
-      <div className="divider">
-        <hr />
-        <span>OR</span>
-        <hr />
-      </div>
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            required
+          />
 
-      {/* Signup link */}
-      <p style={{ marginTop: "15px" }}>
-        Don’t have an account? <a href="/signup">Sign Up</a>
-      </p>
+          <div className="auth-options">
+            <label className="remember-me">
+              <input
+                type="checkbox"
+                checked={remember}
+                onChange={(e) => setRemember(e.target.checked)}
+              />
+              Remember me
+            </label>
+
+            {error && <p className="error-text">{error}</p>}
+          </div>
+
+          <button className="login-btn" type="submit">
+            Login
+          </button>
+        </form>
+
+        <div className="divider">
+          <hr />
+          <span>OR</span>
+          <hr />
+        </div>
+
+        <p className="account-text">
+          Don’t have an account? <Link to="/signup">Sign Up</Link>
+        </p>
+      </div>
     </div>
   );
 }
-export default Login; 
+
+export default Login;

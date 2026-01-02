@@ -1,0 +1,33 @@
+.layout {
+  display: flex;
+}
+
+.content {
+  flex: 1;
+  padding: 30px;
+  background: #f4f6f8;
+  min-height: 100vh;
+}
+
+.cards {
+  display: flex;
+  gap: 25px;
+  margin-top: 20px;
+}
+
+.card {
+  background: white;
+  padding: 25px;
+  width: 220px;
+  border-radius: 10px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+.income { border-top: 5px solid #22c55e; }
+.expense { border-top: 5px solid #ef4444; }
+.balance { border-top: 5px solid #3b82f6; }
+
+.card p {
+  font-size: 22px;
+  font-weight: bold;
+}

@@ -1,28 +1,38 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
 
-const Dashboard = () => {
-  const navigate = useNavigate();
+import "../Styles/dashboard.css";
+import Sidebar from "../Components/Sidebar";
+
+export default function Dashboard() {
+  const totalIncome = 45000;
+  const totalExpense = 28500;
+  const balance = totalIncome - totalExpense;
 
   return (
-    <div style={{ padding: "2rem" }}>
-      <h1>Dashboard</h1>
-      <p>Welcome! Use the buttons below to manage your finance.</p>
+    <div className="layout">
+      {/* Sidebar */}
+      <Sidebar />
 
-      <div style={{ marginTop: "2rem" }}>
-        <button
-          style={{ marginRight: "1rem" }}
-          onClick={() => navigate("/addtransaction")}
-        >
-          Add Transaction
-        </button>
+      {/* Main content */}
+      <div className="content">
+        <h2>Dashboard</h2>
 
-        <button onClick={() => navigate("/addcategory")}>
-          Add Category
-        </button>
+        <div className="cards">
+          <div className="card income">
+            <h4>Total Income</h4>
+            <p>₹{totalIncome}</p>
+          </div>
+
+          <div className="card expense">
+            <h4>Total Expense</h4>
+            <p>₹{totalExpense}</p>
+          </div>
+
+          <div className="card balance">
+            <h4>Monthly Balance</h4>
+            <p>₹{balance}</p>
+          </div>
+        </div>
       </div>
     </div>
   );
-};
-
-export default Dashboard;
+}

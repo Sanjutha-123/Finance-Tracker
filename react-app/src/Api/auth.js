@@ -96,6 +96,7 @@ export const addTransaction = async (data) => {
         type: data.type,
         categoryId: data.categoryId,
         description: data.description,
+          Datetime: data.date ? new Date(data.date).toISOString() : null
       },
       authHeader()
     );
@@ -107,3 +108,68 @@ export const addTransaction = async (data) => {
     throw new Error(error.response?.data?.message || "Failed to add transaction");
   }
 };
+
+export const getTransactions = async () => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/Transaction`,
+      authHeader()
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error("Unauthorized. Please login again.");
+    }
+    throw new Error("Failed to load transactions");
+  }
+};
+
+
+export const getTransactionById = async (id) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/Transaction/${id}`,
+      authHeader()
+    );
+    return response.data;
+  } catch (error) {
+    throw new Error("Failed to load transaction");
+  }
+};
+
+export const updateTransaction = async (id, data) => {
+  try {
+    const response = await axios.put(
+      `${BASE_URL}/Transaction/update/${id}`,
+      {
+        amount: data.amount,
+        type: data.type,
+        categoryId: data.categoryId,
+        description: data.description,
+      },
+      authHeader()
+    );
+    return response.data;
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error("Unauthorized. Please login again.");
+    }
+    throw new Error(error.response?.data?.message || "Failed to update transaction");
+  }
+};
+
+
+export const deleteTransaction = async (id) => {
+  try {
+    await axios.delete(
+      `${BASE_URL}/Transaction/delete/${id}`,
+      authHeader()
+    );
+  } catch (error) {
+    if (error.response?.status === 401) {
+      throw new Error("Unauthorized. Please login again.");
+    }
+    throw new Error(error.response?.data?.message || "Failed to delete transaction");
+  }
+};
+

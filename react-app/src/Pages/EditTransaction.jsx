@@ -1,32 +1,50 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Added
-import { addTransaction, getCategories } from "../Api/auth";
+import { useParams, useNavigate } from "react-router-dom";
+import {
+  getCategories,
+  getTransactionById,
+  updateTransaction
+} from "../Api/auth";
 import "../Styles/TransactionCategory.css";
-import Sidebar from "../Components/Sidebar";
 
-
-const AddTransaction = () => {
-  const navigate = useNavigate(); // ✅ Added
+const EditTransaction = () => {
+  const { id } = useParams();          // ✅ get ID from URL
+  const navigate = useNavigate();
 
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("expense");
   const [categoryId, setCategoryId] = useState("");
   const [description, setDescription] = useState("");
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
   const [categories, setCategories] = useState([]);
   const [error, setError] = useState("");
 
+  // ✅ Load categories + transaction
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getCategories();
-        setCategories(data);
-      } catch {
-        setError("Failed to load categories");
-      }
-    };
     fetchCategories();
+    fetchTransaction();
   }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const data = await getCategories();
+      setCategories(data);
+    } catch {
+      setError("Failed to load categories");
+    }
+  };
+
+  const fetchTransaction = async () => {
+    try {
+      const data = await getTransactionById(id);
+
+      setAmount(data.amount);
+      setType(data.type.toLowerCase());
+      setCategoryId(data.categoryId);
+      setDescription(data.description || "");
+    } catch {
+      setError("Failed to load transaction");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -43,46 +61,38 @@ const AddTransaction = () => {
     }
 
     try {
-      await addTransaction({
+      await updateTransaction(id, {
         amount: Number(amount),
         type: type === "expense" ? "Expense" : "Income",
         categoryId: Number(categoryId),
-        description: description || "",
-        date: date,
+        description
       });
 
-      alert("Transaction added successfully");
+     alert("✅ Transaction updated successfully");
 
-      // ✅ Navigate to transaction list after adding
-      navigate("/transactionlist"); 
+      // ✅ Go back to list
+      navigate("/transactionlist");
 
     } catch {
-      setError("Failed to add transaction");
+      setError("Failed to update transaction");
     }
   };
 
   return (
-    
-       <div className="layout">
-            {/* Sidebar */}
-            <Sidebar />
-      <div className="page-wrapper">     
     <div className="card">
-     <h2 className="text-center">Add Transaction</h2>
-      
+      <h2>Edit Transaction</h2>
+
       {error && <p className="error">{error}</p>}
 
       <form onSubmit={handleSubmit}>
         <label>Amount</label>
         <input
           type="number"
-          placeholder="Enter an amount"
           value={amount}
           min="1"
           required
           onChange={(e) => setAmount(e.target.value)}
         />
-        
 
         <label>Type</label>
         <select value={type} onChange={(e) => setType(e.target.value)}>
@@ -93,39 +103,29 @@ const AddTransaction = () => {
         <label>Category</label>
         <select
           value={categoryId}
+          required
           onChange={(e) => setCategoryId(e.target.value)}
         >
           <option value="">Select Category</option>
-          {categories.map((cat) => (
+          {categories.map(cat => (
             <option key={cat.id} value={cat.id}>
               {cat.name}
             </option>
           ))}
         </select>
 
-        <label>Date</label>
-        <input
-          type="date"
-          value={date}
-          required
-          onChange={(e) => setDate(e.target.value)}
-        />
-
         <label>Note</label>
         <textarea
-          placeholder="Optional note..."
           value={description}
           onChange={(e) => setDescription(e.target.value)}
         />
 
         <button className="btn-primary" type="submit">
-          Add Transaction
+          Update Transaction
         </button>
       </form>
-    </div>
-    </div>
     </div>
   );
 };
 
-export default AddTransaction;
+export default EditTransaction;

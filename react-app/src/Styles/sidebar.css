@@ -1,0 +1,37 @@
+.sidebar {
+  width: 220px;
+  background: #1f2937; /* dark blue */
+  color: white;
+  min-height: 100vh;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sidebar h2 {
+  font-size: 20px;
+  margin-bottom: 20px;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.sidebar nav a {
+  color: white;
+  text-decoration: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: background 0.3s;
+}
+
+.sidebar nav a:hover {
+  background: #374151;
+}
+
+.sidebar nav a.active {
+  background: #3b82f6; /* blue highlight */
+}
