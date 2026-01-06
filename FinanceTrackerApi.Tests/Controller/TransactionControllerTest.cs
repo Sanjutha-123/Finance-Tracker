@@ -1,13 +1,13 @@
+
 using Xunit;
 using Moq;
 using Microsoft.AspNetCore.Mvc;
 using FinanceTrackerApi.Controllers;
-using FinanceTrackerApi.Data;
 using FinanceTrackerApi.Models;
-using System.Security.Claims;        
-using Microsoft.AspNetCore.Http;    
+using FinanceTrackerApi.Service;
 using FinanceTrackerApi.Dtos;
-
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace FinanceTrackerApi.Tests.Controllers
 {
@@ -20,89 +20,88 @@ namespace FinanceTrackerApi.Tests.Controllers
         {
             _mockService = new Mock<ITransactionService>();
             _controller = new TransactionController(_mockService.Object);
-        }
 
-       
-    //  GET TESTS
-    public class TransactionController_GetTests
-    {
-        [Fact]
-        public async Task Get_ReturnsOk_WithPagedResult()
-        {
-            // Arrange
-            var mockService = new Mock<ITransactionService>();
-
-            var pagedResult = new PagedResult<Transaction>
-            {
-                PageNumber = 1,
-                PageSize = 10,
-                TotalRecords = 1,
-                Data = new List<Transaction>
-                {
-                    new Transaction
+            // Mock a logged-in user for token-based methods
+            var user = new System.Security.Claims.ClaimsPrincipal(
+                new System.Security.Claims.ClaimsIdentity(
+                    new[]
                     {
-                        Id = 1,
-                        Amount = 500,
-                        Type = "income"
+                        new System.Security.Claims.Claim("id", "1") // userId = 1
                     }
+                )
+            );
+            _controller.ControllerContext = new ControllerContext
+            {
+                HttpContext = new Microsoft.AspNetCore.Http.DefaultHttpContext
+                {
+                    User = user
                 }
             };
-
-            mockService
-                .Setup(s => s.GetPagedAsync(1, 10, "Datetime2", "desc"))
-                .ReturnsAsync(pagedResult);
-
-            var controller = new TransactionController(mockService.Object);
-
-            // Act
-            var result = await controller.Get(1, 10, "Datetime2", "desc");
-
-            // Assert
-            var okResult = Assert.IsType<OkObjectResult>(result);
-            var returnedData = Assert.IsType<PagedResult<Transaction>>(okResult.Value);
-
-            Assert.Equal(1, returnedData.TotalRecords);
-            Assert.Single(returnedData.Data);
         }
-        // DELETE TEST
-    public class TransactionControllerTests
-{
-    private readonly Mock<ITransactionService> _mockService;
-    private readonly TransactionController _controller;
 
-    public TransactionControllerTests()
-    {
-        _mockService = new Mock<ITransactionService>();
-        _controller = new TransactionController(_mockService.Object);
-    }
-    
+
+        // ---------------- GET BY ID ----------------
         [Fact]
-        public void Delete_ExistingTransaction_ReturnsOk()
+        public async Task GetById_ExistingTransaction_ReturnsOk()
         {
-            // Arrange
-            int transactionId = 1;
+            var transaction = new Transaction { Id = 1, Amount = 100, Type = "income" };
 
             _mockService
-                .Setup(s => s.DeleteTransaction(transactionId))
-                .Returns(true);
+                .Setup(s => s.GetByIdAsync(1, 1))
+                .ReturnsAsync(transaction);
 
-            // Act
-            var result = _controller.Delete(transactionId);
+            var result = await _controller.GetById(1);
 
-            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var returnedTransaction = Assert.IsType<Transaction>(okResult.Value);
+            Assert.Equal(1, returnedTransaction.Id);
+        }
+
+        // ---------------- CREATE ----------------
+        [Fact]
+        public async Task Add_ValidTransaction_ReturnsOk()
+        {
+            var dto = new TransactionDto { Amount = 200, Type = "income" };
+
+            _mockService
+                .Setup(s => s.AddTransaction(dto, 1))
+                .ReturnsAsync(new Transaction { Id = 1, Amount = 200, Type = "income" });
+
+            var result = await _controller.Add(dto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            var created = Assert.IsType<Transaction>(okResult.Value);
+            Assert.Equal(200, created.Amount);
+        }
+
+        // ---------------- UPDATE ----------------
+        [Fact]
+        public async Task Update_ExistingTransaction_ReturnsOk()
+        {
+            var dto = new TransactionDto { Amount = 150, Type = "expense" };
+
+            _mockService
+                .Setup(s => s.UpdateTransaction(1, dto, 1))
+                .ReturnsAsync(true);
+
+            var result = await _controller.Update(1, dto);
+
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal("Updated successfully", okResult.Value);
+        }
+
+        // ---------------- DELETE ----------------
+        [Fact]
+        public async Task Delete_ExistingTransaction_ReturnsOk()
+        {
+            _mockService
+                .Setup(s => s.DeleteTransaction(1, 1))
+                .ReturnsAsync(true);
+
+            var result = await _controller.Delete(1);
+
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal("Deleted successfully", okResult.Value);
         }
     }
-    } 
-    // UPDATE TEST
-     [Fact]
-    public void Update_Transaction_ReturnsOk()
-    {
-        var transaction = new Transaction { Amount = 100, Type = "income" };
-        _mockService.Setup(s => s.UpdateTransaction(1, transaction)).Returns(true);
-        var result = _controller.Update(1, transaction);
-        Assert.IsType<OkObjectResult>(result);
-    }
-}
 }

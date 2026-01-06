@@ -1,70 +1,96 @@
-import { useState } from "react";
-import { addCategory } from "../Api/auth";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; 
+import { addCategory, getCategories } from "../Api/auth"; 
 import "../Styles/TransactionCategory.css";
-
 import Sidebar from "../Components/Sidebar";
 
-
 const AddCategory = () => {
-  const [name, setName] = useState("");
-  const [type, setType] = useState("Type");
+    const navigate = useNavigate(); 
 
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // prevent page reload if button is inside form
-    if (!name) {
-      alert("Please enter a category name");
-      return;
-    }
+    const [name, setName] = useState("");
+    const [type, setType] = useState("Expense");
+    const [existingCategories, setExistingCategories] = useState([]);
 
-    try {
-      // Normalize type: first letter uppercase, rest lowercase
-      const formattedType = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+    // Fetch categories whenever name or type changes
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const result = await getCategories();
+                setExistingCategories(result);
+            } catch (error) {
+                console.error("Failed to fetch categories:", error);
+            }
+        };
+        fetchCategories();
+    }, []);
 
-      const result = await addCategory({ name, type: formattedType });
-      alert("Category Added Successfully");
-      console.log("Category added:", result);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-      setName(""); // reset form
-      setType("Type"); // reset type to default
-    } catch (error) {
-  console.error("Failed to add category:", error.response?.data || error.message || error);
-}
+        const trimmedName = name.trim();
+        if (!trimmedName) {
+            alert("Please enter a category name");
+            return;
+        }
 
-  };
+        // Check duplicate (case-insensitive)
+        const isDuplicate = existingCategories.some(
+            (cat) =>
+                cat.name.toLowerCase() === trimmedName.toLowerCase() &&
+                cat.type.toLowerCase() === type.toLowerCase()
+        );
 
-  return (
+        if (isDuplicate) {
+            alert(`Category "${trimmedName} - ${type}" already exists!`);
+            return;
+        }
 
-     <div className="layout">
-      {/* Sidebar */}
-      <Sidebar />
-     <div className="page-wrapper">
-     
-    <div className="card">
-      <h2>Add Category</h2>
-      
+        try {
+            const formattedType = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
+            const result = await addCategory({ name: trimmedName, type: formattedType });
 
-      <label>Category Name</label>
-      <input
-        type="text"
-        placeholder="Category Name"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
+            alert("Category Added Successfully");
+            navigate("/addtransaction"); 
+            console.log("Category added:", result);
 
-      <label>Type</label>
-      <select value={type} onChange={(e) => setType(e.target.value)}>
-        <option>Expense</option>
-        <option>Income</option>
-      </select>
+            setName("");
+            setType("Expense");
 
-     <button className="btn-primary" onClick={handleSubmit}>
-  Add Category
-</button>
-    </div>
-    </div>  
-     </div> 
-   
-  );
+            // Immediately update local categories list
+            setExistingCategories([...existingCategories, { name: trimmedName, type: formattedType }]);
+        } catch (error) {
+            console.error("Failed to add category:", error.response?.data || error.message || error);
+        }
+    };
+
+    return (
+        <div className="layout">
+            <Sidebar />
+            <div className="page-wrapper">
+                <div className="card">
+                    <h2>Add Category</h2>
+
+                    <label>Category Name</label>
+                    <input
+                        type="text"
+                        placeholder="Category Name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                    />
+
+                    <label>Type</label>
+                    <select value={type} onChange={(e) => setType(e.target.value)}>
+                        <option>Expense</option>
+                        <option>Income</option>
+                    </select>
+
+                    <button className="btn-primary" onClick={handleSubmit}>
+                        Add Category
+                    </button>
+                </div>
+            </div>  
+        </div> 
+    );
 };
 
 export default AddCategory;

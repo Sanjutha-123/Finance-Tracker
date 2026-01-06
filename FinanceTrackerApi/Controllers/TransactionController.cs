@@ -2,13 +2,14 @@ using FinanceTrackerApi.Models;
 using FinanceTrackerApi.Data;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
-using Microsoft.AspNetCore.Authorization;
+using FinanceTrackerApi.Service;    
+using FinanceTrackerApi.Dtos;
 
 namespace FinanceTrackerApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize] 
+    
     public class TransactionController : ControllerBase
     {
         private readonly ITransactionService _service;

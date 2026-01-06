@@ -4,6 +4,12 @@
   display: flex;
   flex-direction: column;
 }
+html, body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+}
+
 
 /* Generic container for pages */
 .page-container {
@@ -27,3 +33,4 @@ header, footer {
 .mb-20 {
   margin-bottom: 20px;
 }
+

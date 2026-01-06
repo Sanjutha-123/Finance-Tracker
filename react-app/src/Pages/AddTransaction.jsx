@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom"; // ✅ Added
+import { useNavigate } from "react-router-dom"; 
 import { addTransaction, getCategories } from "../Api/auth";
 import "../Styles/TransactionCategory.css";
 import Sidebar from "../Components/Sidebar";
 
-
 const AddTransaction = () => {
-  const navigate = useNavigate(); // ✅ Added
+  const navigate = useNavigate(); 
 
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("expense");
@@ -51,81 +50,79 @@ const AddTransaction = () => {
         date: date,
       });
 
-      alert("Transaction added successfully");
-
-      // ✅ Navigate to transaction list after adding
+      alert(" Transaction added successfully");
       navigate("/transactionlist"); 
-
     } catch {
       setError("Failed to add transaction");
     }
   };
 
-  return (
+  return ( 
     
-       <div className="layout">
-            {/* Sidebar */}
-            <Sidebar />
-      <div className="page-wrapper">     
-    <div className="card">
-     <h2 className="text-center">Add Transaction</h2>
-      
-      {error && <p className="error">{error}</p>}
+    <div className="layout">
+        {/* Sidebar */}
+        <Sidebar />
 
-      <form onSubmit={handleSubmit}>
-        <label>Amount</label>
-        <input
-          type="number"
-          placeholder="Enter an amount"
-          value={amount}
-          min="1"
-          required
-          onChange={(e) => setAmount(e.target.value)}
-        />
-        
+    <div className="page-wrapper">
+      <div className="card">
+        <h2>Add Transaction</h2>
+        {error && <p className="error">{error}</p>}
 
-        <label>Type</label>
-        <select value={type} onChange={(e) => setType(e.target.value)}>
-          <option value="expense">Expense</option>
-          <option value="income">Income</option>
-        </select>
+        <form onSubmit={handleSubmit}>
+          <label>Amount</label>
+          <input
+            type="number"
+            placeholder="Enter amount"
+            value={amount}
+            min="1"
+            required
+            onChange={(e) => setAmount(e.target.value)}
+          />
 
-        <label>Category</label>
-        <select
-          value={categoryId}
-          onChange={(e) => setCategoryId(e.target.value)}
-        >
-          <option value="">Select Category</option>
-          {categories.map((cat) => (
-            <option key={cat.id} value={cat.id}>
-              {cat.name}
-            </option>
-          ))}
-        </select>
+          <label>Type</label>
+          <select value={type} onChange={(e) => setType(e.target.value)}>
+            <option value="expense">Expense</option>
+            <option value="income">Income</option>
+          </select>
 
-        <label>Date</label>
-        <input
-          type="date"
-          value={date}
-          required
-          onChange={(e) => setDate(e.target.value)}
-        />
+          <label>Category</label>
+          <select
+            value={categoryId}
+            required
+            onChange={(e) => setCategoryId(e.target.value)}
+          >
+            <option value="">Select Category</option>
+            {categories.map((cat) => (
+              <option key={cat.id} value={cat.id}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
 
-        <label>Note</label>
-        <textarea
-          placeholder="Optional note..."
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+          <label>Date</label>
+          <input
+            type="date"
+            value={date}
+            required
+            onChange={(e) => setDate(e.target.value)}
+          />
 
-        <button className="btn-primary" type="submit">
-          Add Transaction
-        </button>
-      </form>
+          <label>Note</label>
+          <textarea
+            placeholder="Optional note..."
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+
+          <button className="btn-primary" type="submit">
+            Add Transaction
+          </button>
+        </form>
+      </div>
     </div>
     </div>
-    </div>
-  );
+ 
+);
+
 };
-
 export default AddTransaction;

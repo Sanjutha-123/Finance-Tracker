@@ -1,8 +1,9 @@
-/* Container */
 .transaction-container {
   padding: 1.5rem;
-  background-color: #f5f7fa; /* Light gray background like your screenshot */
+  background: ();
   min-height: 100vh;
+  width: 100%;
+  box-sizing: border-box;
   font-family: 'Inter', sans-serif;
 }
 

@@ -1,4 +1,5 @@
 using FinanceTrackerApi.Models;
+using FinanceTrackerApi.Service;
 using Microsoft.EntityFrameworkCore;
 
 namespace FinanceTrackerApi.Data
@@ -95,6 +96,11 @@ namespace FinanceTrackerApi.Data
                 query = query.Where(t => t.Type.ToLower() == type.ToLower());
 
             return await query.ToListAsync();
+        }
+
+        Task<PagedResult<Transaction>> ITransactionService.GetPagedByUserAsync(int userId, int pageNumber, int pageSize, string? sortBy, string? sortDirection)
+        {
+            throw new NotImplementedException();
         }
     }
 }

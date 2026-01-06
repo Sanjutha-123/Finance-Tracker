@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { login } from "../Api/auth.js";
-import "../Styles/auth.css";
+import "../Styles/Auth.css";
  // Make sure your CSS is in styles folder
 
 function Login() {
