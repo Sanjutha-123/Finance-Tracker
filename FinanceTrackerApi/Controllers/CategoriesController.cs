@@ -1,7 +1,7 @@
 using FinanceTrackerApi.Models;
 using FinanceTrackerApi.Service;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
+
 
 namespace FinanceTrackerApi.Controllers
 {
@@ -16,7 +16,7 @@ public CategoryController(ICategoryService service)
     _service = service;
 }
         // ---------------------- GET ALL CATEGORIES ----------------------
-        // GET: /api/category
+     
         [HttpGet]
         public async Task<IActionResult> GetAllCategories()
         {
@@ -25,7 +25,7 @@ public CategoryController(ICategoryService service)
         }
 
         // ---------------------- GET CATEGORY BY ID ----------------------
-        // GET: /api/category/{id}
+       
         [HttpGet("{id}")]
         public async Task<IActionResult> GetCategoryById(int id)
         {
@@ -37,7 +37,7 @@ public CategoryController(ICategoryService service)
         }
 
         // ---------------------- ADD CATEGORY ----------------------
-        // POST: /api/category/add
+       
         [HttpPost("add")]
 public async Task<IActionResult> AddCategory([FromBody] Category category)
 {
@@ -53,9 +53,19 @@ public async Task<IActionResult> AddCategory([FromBody] Category category)
     return Ok(addedCategory);
 }
 
+//-------------------Delete Category-----------------------------//
+    [HttpDelete("{id}")]
+public async Task<IActionResult> DeleteCategory(int id)
+{
+    var deleted = await _service.DeleteCategoryAsync(id);
+
+    if (!deleted)
+        return NotFound(new { message = $"Category with ID {id} not found" });
+
+    return Ok( "Category deleted successfully" );
+}
     }
 }
-
 
 
 

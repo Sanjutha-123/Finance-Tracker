@@ -9,6 +9,8 @@ namespace FinanceTrackerApi.Service
         Task<IEnumerable<Category>> GetAllCategoriesAsync();
         Task<Category> AddCategoryAsync(Category category);
         Task<Category?> GetCategoryByIdAsync(int id);
+        Task<bool> DeleteCategoryAsync(int id);
+
         
         Task SeedCategoriesAsync();
     }

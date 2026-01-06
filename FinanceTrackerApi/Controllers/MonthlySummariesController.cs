@@ -15,8 +15,7 @@ namespace FinanceTrackerApi.Controllers
         {
             _context = context;
         }
-
-        // Helper to get logged-in user id
+// Helper to get logged-in user id
         private int GetUserIdFromToken()
         {
             var claim = User.FindFirst(ClaimTypes.NameIdentifier);

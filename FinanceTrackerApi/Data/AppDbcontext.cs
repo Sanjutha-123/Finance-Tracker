@@ -33,17 +33,14 @@ namespace FinanceTrackerApi.Data
             .IsRequired();
 
     // Seed categories with Type
-    modelBuilder.Entity<Category>().HasData(
+       modelBuilder.Entity<Category>().HasData(
         new Category { Id = 1, Name = "Salary", Type = "Income" },
         new Category { Id = 2, Name = "Food", Type = "Expense" },
         new Category { Id = 3, Name = "Transport", Type = "Expense" },
         new Category { Id = 4, Name = "Entertainment", Type = "Expense" },
         new Category { Id = 5, Name = "Shopping", Type = "Expense" }
     );
-
-
-
-          base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(modelBuilder);
             
         }
     }

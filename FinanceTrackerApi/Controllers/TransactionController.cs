@@ -1,9 +1,5 @@
-using FinanceTrackerApi.Models;
-using FinanceTrackerApi.Data;
+
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
-using FinanceTrackerApi.Service;    
-using FinanceTrackerApi.Dtos;
 
 namespace FinanceTrackerApi.Controllers
 {
@@ -23,7 +19,7 @@ namespace FinanceTrackerApi.Controllers
     
 private int GetUserIdFromToken()
 {
-    var claim = User.FindFirst("id"); // ⚡ match JWT claim type
+    var claim = User.FindFirst("id"); //  match JWT claim type
     return claim == null ? 0 : int.Parse(claim.Value);
 }
         

@@ -39,6 +39,18 @@ namespace FinanceTrackerApi.Service
         {
             return await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
         }
+public async Task<bool> DeleteCategoryAsync(int id)
+{
+    var category = await _context.Categories.FindAsync(id);
+
+    if (category == null)
+        return false;
+
+    _context.Categories.Remove(category);
+    await _context.SaveChangesAsync();
+
+    return true;
+}
 
     public async Task SeedCategoriesAsync()
         {

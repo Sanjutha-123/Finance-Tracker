@@ -45,7 +45,7 @@ namespace FinanceTrackerApi.Service
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_accessSecret));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-            // ✅ Use "id" claim so controller can extract userId
+            //  Use "id" claim so controller can extract userId
             var claims = new[]
             {
                 new Claim("id", user.Id.ToString()),       // user id

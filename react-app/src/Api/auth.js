@@ -3,9 +3,7 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:5198/api";
 
-// ----------------------
-// AUTH (LOGIN / REGISTER)
-// ----------------------
+// Login
 export const login = async (email, password) => {
   try {
     const response = await axios.post(`${BASE_URL}/Users/Login`, { email, password });
@@ -18,7 +16,7 @@ export const login = async (email, password) => {
     throw new Error(message);
   }
 };
-
+// Register
 export const signup = async (username, email, password) => {
   try {
     const response = await axios.post(`${BASE_URL}/Users/Register`, { username, email, password });
@@ -29,18 +27,16 @@ export const signup = async (username, email, password) => {
   }
 };
 
-// ----------------------
-// HELPER: AUTH HEADER
-// ----------------------
+
+//  AUTH HEADER
+
 const authHeader = () => {
   const token = localStorage.getItem("token");
   if (!token) throw new Error("Unauthorized: No token found. Please login again.");
   return { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } };
 };
 
-// ----------------------
-// CATEGORIES
-// ----------------------
+// add categories
 export const addCategory = async (data) => {
   try {
     const response = await axios.post(`${BASE_URL}/Category/add`, { name: data.name, type: data.type }, authHeader());
@@ -50,7 +46,7 @@ export const addCategory = async (data) => {
     throw new Error(error.response?.data?.message || "Failed to add category");
   }
 };
-
+// get categories
 export const getCategories = async () => {
   try {
     const response = await axios.get(`${BASE_URL}/Category`, authHeader());
@@ -60,9 +56,7 @@ export const getCategories = async () => {
   }
 };
 
-// ----------------------
-// TRANSACTIONS
-// ----------------------
+
 
 // Add transaction
 export const addTransaction = async (data) => {
@@ -84,12 +78,12 @@ export const addTransaction = async (data) => {
     throw new Error(error.response?.data?.message || "Failed to add transaction");
   }
 };
-
+// get by filter
 export const getTransactions = async (params = {}) => {
   try {
     const queryString = new URLSearchParams(params).toString();
 
-    // ✅ ALWAYS use filter endpoint
+  
     const url = queryString
       ? `${BASE_URL}/Transaction/filter?${queryString}`
       : `${BASE_URL}/Transaction/filter`;
@@ -144,5 +138,16 @@ export const deleteTransaction = async (id) => {
   } catch (error) {
     if (error.response?.status === 401) throw new Error("Unauthorized. Please login again.");
     throw new Error(error.response?.data?.message || "Failed to delete transaction");
+  }
+};
+// Delete category
+export const deleteCategory = async (id) => {
+  try {
+    await axios.delete(`${BASE_URL}/Category/${id}`, authHeader());
+  } catch (error) {
+    if (error.response?.status === 401)
+      throw new Error("Unauthorized. Please login again.");
+
+    throw new Error(error.response?.data?.message || "Failed to delete category");
   }
 };

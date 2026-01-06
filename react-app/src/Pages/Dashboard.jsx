@@ -115,7 +115,7 @@ export default function Dashboard() {
       <Sidebar />
 
       <div className="content">
-        <h2>Dashboard</h2>
+        <h1>Dashboard</h1>
 
         {/* SUMMARY CARDS */}
         <div className="cards">

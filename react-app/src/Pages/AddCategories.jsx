@@ -1,96 +1,125 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom"; 
-import { addCategory, getCategories } from "../Api/auth"; 
-import "../Styles/TransactionCategory.css";
+import { getCategories, addCategory } from "../Api/auth";
 import Sidebar from "../Components/Sidebar";
+import "../Styles/Category.css";
 
-const AddCategory = () => {
-    const navigate = useNavigate(); 
+export default function AddCategory() {
+  const [categories, setCategories] = useState([]);
+  const [categoryName, setCategoryName] = useState("");
+  const [type, setType] = useState("Expense");
+  const [filterType, setFilterType] = useState("All");
 
-    const [name, setName] = useState("");
-    const [type, setType] = useState("Expense");
-    const [existingCategories, setExistingCategories] = useState([]);
+  useEffect(() => {
+    fetchCategories();
+  }, []);
 
-    // Fetch categories whenever name or type changes
-    useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const result = await getCategories();
-                setExistingCategories(result);
-            } catch (error) {
-                console.error("Failed to fetch categories:", error);
-            }
-        };
-        fetchCategories();
-    }, []);
+  const fetchCategories = async () => {
+    const data = await getCategories();
+    setCategories(data.reverse()); // latest on top
+  };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+  const handleAddCategory = async () => {
+    if (!categoryName.trim()) {
+      alert("Category name cannot be empty!");
+      return;
+    }
 
-        const trimmedName = name.trim();
-        if (!trimmedName) {
-            alert("Please enter a category name");
-            return;
-        }
-
-        // Check duplicate (case-insensitive)
-        const isDuplicate = existingCategories.some(
-            (cat) =>
-                cat.name.toLowerCase() === trimmedName.toLowerCase() &&
-                cat.type.toLowerCase() === type.toLowerCase()
-        );
-
-        if (isDuplicate) {
-            alert(`Category "${trimmedName} - ${type}" already exists!`);
-            return;
-        }
-
-        try {
-            const formattedType = type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
-            const result = await addCategory({ name: trimmedName, type: formattedType });
-
-            alert("Category Added Successfully");
-            navigate("/addtransaction"); 
-            console.log("Category added:", result);
-
-            setName("");
-            setType("Expense");
-
-            // Immediately update local categories list
-            setExistingCategories([...existingCategories, { name: trimmedName, type: formattedType }]);
-        } catch (error) {
-            console.error("Failed to add category:", error.response?.data || error.message || error);
-        }
-    };
-
-    return (
-        <div className="layout">
-            <Sidebar />
-            <div className="page-wrapper">
-                <div className="card">
-                    <h2>Add Category</h2>
-
-                    <label>Category Name</label>
-                    <input
-                        type="text"
-                        placeholder="Category Name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                    />
-
-                    <label>Type</label>
-                    <select value={type} onChange={(e) => setType(e.target.value)}>
-                        <option>Expense</option>
-                        <option>Income</option>
-                    </select>
-
-                    <button className="btn-primary" onClick={handleSubmit}>
-                        Add Category
-                    </button>
-                </div>
-            </div>  
-        </div> 
+    // Check for duplicates
+    const duplicate = categories.find(
+      (c) =>
+        c.name.toLowerCase() === categoryName.toLowerCase() &&
+        c.type.toLowerCase() === type.toLowerCase()
     );
-};
+    if (duplicate) {
+      alert("Category already exists for this type!");
+      return;
+    }
 
-export default AddCategory;
+    const newCategory = await addCategory({ name: categoryName, type });
+    setCategories((prev) => [newCategory, ...prev]);
+    setCategoryName("");
+  };
+
+  const handleDelete = (id) => {
+    // Placeholder for delete API
+    const confirmed = window.confirm("Are you sure you want to delete this category?");
+    if (confirmed) {
+      setCategories(categories.filter((c) => c.id !== id));
+    }
+  };
+const filteredCategories = categories.filter((c) => {
+  if (filterType === "All") return true;
+  return c.type.toLowerCase() === filterType.toLowerCase();
+});
+
+  return (
+    <div className="layout">
+      <Sidebar />
+
+      <div className="category-main">
+        {/* Add Category Form */}
+        <div className="add-category-top">
+          <input
+            type="text"
+            placeholder="Category Name"
+            value={categoryName}
+            onChange={(e) => setCategoryName(e.target.value)}
+          />
+          <select value={type} onChange={(e) => setType(e.target.value)}>
+            <option value="Expense">Expense</option>
+            <option value="Income">Income</option>
+          </select>
+          <button onClick={handleAddCategory}>Add Category</button>
+        </div>
+
+        {/* Filter */}
+        <div className="filter-section">
+          <label>Type</label>
+          <select value={filterType} onChange={(e) => setFilterType(e.target.value)}>
+             <option value="All">All</option>
+            <option value="Expense">Expense</option>
+            <option value="Income">Income</option>
+          </select>
+        </div>
+
+        {/* Existing Categories Table */}
+        <table className="category-table">
+          <thead>
+            <tr>
+              <th>S.No</th>
+              <th>Name</th>
+              <th>Type</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {filteredCategories.map((cat, index) => (
+              <tr key={cat.id || index}>
+                <td>{index + 1}</td>
+                <td>{cat.name}</td>
+                <td>
+  <span className={cat.type === "Expense" ? "type-expense" : "type-income"}>
+    {cat.type}
+  </span>
+</td>
+
+                <td>
+                  <button className="delete-btn" onClick={() => handleDelete(cat.id)}>
+                    Delete
+                  </button>
+                </td>
+              </tr>
+            ))}
+            {filteredCategories.length === 0 && (
+              <tr>
+                <td colSpan="4" style={{ textAlign: "center" }}>
+                  No categories found.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

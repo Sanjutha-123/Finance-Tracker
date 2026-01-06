@@ -6,7 +6,7 @@ import {
   getTransactionById,
   updateTransaction
 } from "../Api/auth";
-import "../Styles/TransactionCategory.css";
+import "../Styles/Transaction.css";
 
 const EditTransaction = () => {
   const { id } = useParams();          // transaction id from URL

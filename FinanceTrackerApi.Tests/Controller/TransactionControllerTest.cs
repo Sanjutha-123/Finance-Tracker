@@ -1,13 +1,4 @@
 
-using Xunit;
-using Moq;
-using Microsoft.AspNetCore.Mvc;
-using FinanceTrackerApi.Controllers;
-using FinanceTrackerApi.Models;
-using FinanceTrackerApi.Service;
-using FinanceTrackerApi.Dtos;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace FinanceTrackerApi.Tests.Controllers
 {

@@ -16,11 +16,11 @@
 }
 
 .card {
-  background: rgb(196, 227, 236);
+  background: rgb(9, 9, 9);
   padding: 25px;
   width: 220px;
   border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+  box-shadow: 0 4px 10px rgba(154, 9, 9, 0.08);
 }
 
 .income { border-top: 5px solid #3fc770; }

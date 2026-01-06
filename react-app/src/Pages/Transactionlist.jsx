@@ -123,7 +123,7 @@ const fetchTransactions = async () => {
     <div className="layout">
       <Sidebar />
       <div className="transaction-container">
-        <h1 className="transaction-header mb-2">Transaction List</h1>
+        <h2>Transaction List</h2>
 
         {/* Filters + Create button */}
         <div className="transaction-tabs-container mb-4" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

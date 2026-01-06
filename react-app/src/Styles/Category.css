@@ -1,0 +1,173 @@
+/* Container */
+.add-category-container {
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #f9fafb;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  font-family: Arial, sans-serif;
+}
+
+/* Headings */
+.add-category-container h2 {
+  margin-bottom: 15px;
+  color: #111827;
+  font-size: 1.4rem;
+}
+
+/* Filter dropdown */
+.add-category-container select {
+  padding: 5px 10px;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  border: 1px solid #d1d5db;
+  background-color: #fff;
+  font-size: 1rem;
+}
+
+/* Layout */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Sidebar */
+.layout > .Sidebar {
+  width: 250px;
+}
+
+/* Main content */
+.category-main {
+  flex: 1;
+  padding: 20px;
+  background: #f8f9fa;
+}
+
+/* Add category form top row */
+.add-category-top {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.add-category-top input {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.add-category-top select {
+  flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.add-category-top button {
+  flex: 1;
+  background: #60a2e8;
+  padding: 0.35rem 0.75rem;
+  font-size: 16px;
+  font-weight: 100;
+  border: none;
+  border-radius: 16px;
+}
+
+.add-category-top button:hover {
+  background: #aeaef5;
+}
+
+/* Filter section */
+.filter-section {
+  margin-bottom: 10px;
+}
+
+/* Category table - borderless */
+.category-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+}
+
+.category-table th,
+.category-table td {
+  padding: 12px 15px;
+  text-align: left;
+  border: none; /* removes horizontal and vertical lines */
+}
+
+/* Header styling */
+.category-table th {
+  background: #f1f1f1;
+  color: #374151;
+}
+
+/* Hover effect for rows */
+.category-table tbody tr:hover {
+  background-color: #f9f9f9;
+  transition: background 0.2s;
+}
+
+/* Expense & Income pills */
+.category-table td span.expense {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 600;
+  text-transform: capitalize;
+}
+
+.category-table td span.income {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 3px 8px;
+  border-radius: 12px;
+  font-size: 600;
+  text-transform: capitalize;
+}
+
+/* Delete button */
+.delete-btn {
+  background: #dc3545;
+  color: white;
+  padding: 6px 12px;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+.delete-btn:hover {
+  background: #b02a37;
+}
+
+/* "No categories found" message */
+.category-table td[colspan="4"] {
+  text-align: center;
+  font-style: italic;
+  color: #6b7280;
+}
+/* Type badges */
+.type-expense {
+  background-color: #fee2e2;
+  color: #b91c1c;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.type-income {
+  background-color: #d1fae5;
+  color: #065f46;
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
