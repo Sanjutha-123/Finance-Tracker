@@ -16,31 +16,35 @@ namespace FinanceTrackerApi.Controllers
         {
             _context = context;
         }
+[HttpGet("export-csv")]
+public async Task<IActionResult> ExportTransactionsCsv()
+{
+    // Get userId from JWT claim
+    var userIdClaim = User.Claims.FirstOrDefault(c => c.Type == "id");
+    if (userIdClaim == null)
+        return Unauthorized("User ID not found in token");
 
-        [HttpGet("export-csv")]
-        public async Task<IActionResult> ExportTransactionsCsv([FromQuery] int userId)
-        {
-            var transactions = await _context.Transactions
-                .Where(t => t.UserId == userId)
-                .OrderBy(t => t.Datetime)
-                .ToListAsync();
+    int userId = int.Parse(userIdClaim.Value);
 
-            if (!transactions.Any())
-                return NotFound("No transactions found");
+    var transactions = await _context.Transactions
+        .Where(t => t.UserId == userId)
+        .OrderBy(t => t.Datetime)
+        .ToListAsync();
 
-            var csv = new StringBuilder();
-            csv.AppendLine("Id,Type,Amount,Category,Date");
+    if (!transactions.Any())
+        return NotFound("No transactions found");
 
-            foreach (var t in transactions)
-            {
-                csv.AppendLine(
-                   $"{t.Id},{t.Type},{t.Amount},{t.CategoryId},{t.Datetime:yyyy-MM-dd}"
-                );
-            }
+    var csv = new StringBuilder();
+    csv.AppendLine("Id,Type,Amount,Category,Date");
 
-            byte[] bytes = Encoding.UTF8.GetBytes(csv.ToString());
-
-            return File(bytes, "text/csv", $"transactions_user_{userId}.csv");
-        }
+    foreach (var t in transactions)
+    {
+        csv.AppendLine($"{t.Id},{t.Type},{t.Amount},{t.CategoryId},{t.Datetime:yyyy-MM-dd}");
     }
+
+    byte[] bytes = Encoding.UTF8.GetBytes(csv.ToString());
+
+    return File(bytes, "text/csv", $"transactions_user_{userId}.csv");
 }
+    }
+    }

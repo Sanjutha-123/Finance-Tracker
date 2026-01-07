@@ -9,6 +9,7 @@ export const login = async (email, password) => {
     const response = await axios.post(`${BASE_URL}/Users/Login`, { email, password });
     if (response.data?.token) {
       localStorage.setItem("token", response.data.token);
+     
     }
     return response.data;
   } catch (error) {
@@ -32,10 +33,14 @@ export const signup = async (username, email, password) => {
 
 const authHeader = () => {
   const token = localStorage.getItem("token");
-  if (!token) throw new Error("Unauthorized: No token found. Please login again.");
-  return { headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" } };
-};
 
+  return {
+    headers: {
+      Authorization: token ? `Bearer ${token}` : "",
+      "Content-Type": "application/json",
+    },
+  };
+};
 // add categories
 export const addCategory = async (data) => {
   try {
@@ -149,5 +154,26 @@ export const deleteCategory = async (id) => {
       throw new Error("Unauthorized. Please login again.");
 
     throw new Error(error.response?.data?.message || "Failed to delete category");
+  }
+};
+
+// Export transactions CSV
+export const downloadTransactionsCsv = async (userId) => {
+  try {
+    const response = await axios.get(
+      `${BASE_URL}/transactions/export-csv`,
+      {
+        params: { userId },
+        responseType: "blob", // 🔴 REQUIRED
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    return response.data; // Blob
+  } catch (error) {
+    console.error("CSV download failed:", error);
+    throw error;
   }
 };

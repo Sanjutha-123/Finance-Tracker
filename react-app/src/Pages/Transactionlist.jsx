@@ -1,7 +1,7 @@
 // TransactionList.js
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getTransactions, getCategories, deleteTransaction } from "../Api/auth";
+import { getTransactions, getCategories, deleteTransaction ,downloadTransactionsCsv   } from "../Api/auth";
 import "../Styles/Transactionlist.css";
 import Sidebar from "../Components/Sidebar";
 
@@ -16,6 +16,7 @@ export default function TransactionList() {
   const [categoryId, setCategoryId] = useState("All");
   const [selectedRows, setSelectedRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [downloading, setDownloading] = useState(false); // CSV download state
 
   // Fetch categories once
   useEffect(() => {
@@ -45,37 +46,54 @@ export default function TransactionList() {
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
   };
-const fetchTransactions = async () => {
-  setLoading(true);
+
+  const fetchTransactions = async () => {
+    setLoading(true);
+    try {
+      const params = {};
+      if (filterType !== "All") params.type = filterType.toLowerCase();
+      if (categoryId && categoryId !== "All") params.categoryId = categoryId;
+      if (startDate) params.start = formatDateForBackend(startDate);
+      if (endDate) params.end = formatDateForBackend(endDate);
+
+      const transResponse = await getTransactions(params);
+      const txData = (transResponse?.data || transResponse || []).map((t) => ({
+        id: t.id ?? t.Id ?? t.transactionId,
+        type: t.type ?? t.Type ?? t.transactionType,
+        categoryId: t.categoryId ?? t.CategoryId ?? t.categoryID,
+        amount: Number(t.amount ?? t.Amount ?? 0),
+        description: t.description ?? t.Description ?? "",
+        date: t.date ?? t.datetime ?? t.Datetime ?? t.createdAt ?? "",
+      }));
+
+      setTransactions(txData);
+      setSelectedRows([]);
+    } catch (err) {
+      console.error("Failed to fetch transactions", err.response || err.message);
+      setTransactions([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+//CSV file
+const handleDownload = async () => {
   try {
-    const params = {};
+    const userId = localStorage.getItem("userId");
 
-   if (filterType !== "All") {
-  params.type = filterType.toLowerCase(); // income / expense
-}
+    const blob = await downloadTransactionsCsv(userId);
 
+    const url = window.URL.createObjectURL(
+      new Blob([blob], { type: "text/csv" })
+    );
 
-    if (categoryId && categoryId !== "All") params.categoryId = categoryId;
-    if (startDate) params.start = formatDateForBackend(startDate);
-    if (endDate) params.end = formatDateForBackend(endDate);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "transactions.csv";
+    a.click();
 
-    const transResponse = await getTransactions(params);
-    const txData = (transResponse?.data || transResponse || []).map((t) => ({
-      id: t.id ?? t.Id ?? t.transactionId,
-      type: t.type ?? t.Type ?? t.transactionType,
-      categoryId: t.categoryId ?? t.CategoryId ?? t.categoryID,
-      amount: Number(t.amount ?? t.Amount ?? 0),
-      description: t.description ?? t.Description ?? "",
-      date: t.date ?? t.datetime ?? t.Datetime ?? t.createdAt ?? "",
-    }));
-
-    setTransactions(txData);
-    setSelectedRows([]);
-  } catch (err) {
-    console.error("Failed to fetch transactions", err.response || err.message);
-    setTransactions([]);
-  } finally {
-    setLoading(false);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    alert("No transactions found or download failed");
   }
 };
 
@@ -119,13 +137,15 @@ const fetchTransactions = async () => {
     return `${String(date.getDate()).padStart(2,"0")}-${String(date.getMonth()+1).padStart(2,"0")}-${date.getFullYear()}`;
   };
 
+ 
+
   return (
     <div className="layout">
       <Sidebar />
       <div className="transaction-container">
         <h2>Transaction List</h2>
 
-        {/* Filters + Create button */}
+        {/* Filters + Create + Download buttons */}
         <div className="transaction-tabs-container mb-4" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <div className="filter-container" style={{ display: "flex", gap: "10px", alignItems: "center" }}>
             <label>Type:</label>
@@ -150,22 +170,42 @@ const fetchTransactions = async () => {
             <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
           </div>
 
-          <button
-            className="action-btn create"
-            onClick={() => navigate("/addtransaction")}
-            style={{
-              backgroundColor: "#28a745",
-              color: "#fff",
-              padding: "8px 16px",
-              border: "none",
-              borderRadius: "5px",
-              cursor: "pointer"
-            }}
-          >
-            Create
-          </button>
+          {/* Buttons */}
+          <div style={{ display: "flex", gap: "10px" }}>
+            <button
+              className="action-btn create"
+              onClick={() => navigate("/addtransaction")}
+              style={{
+                backgroundColor: "#28a745",
+                color: "#fff",
+                padding: "8px 16px",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              Create
+            </button>
+
+            <button
+              className="action-btn download"
+              onClick={handleDownload}
+              disabled={downloading || transactions.length === 0}
+              style={{
+                backgroundColor: "#007bff",
+                color: "#fff",
+                padding: "8px 16px",
+                border: "none",
+                borderRadius: "5px",
+                cursor: "pointer",
+              }}
+            >
+              {downloading ? "Downloading..." : "Download "}
+            </button>
+          </div>
         </div>
 
+        {/* Transactions table */}
         {loading ? (
           <p>Loading transactions...</p>
         ) : (

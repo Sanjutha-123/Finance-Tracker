@@ -36,7 +36,8 @@ namespace FinanceTrackerApi.Service
             {
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
-                ExpiresInMinutes = _accessMinutes
+                ExpiresInMinutes = _accessMinutes,
+                
             };
         }
 
