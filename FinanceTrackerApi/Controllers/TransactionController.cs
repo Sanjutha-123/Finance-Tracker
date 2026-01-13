@@ -43,19 +43,21 @@ private int GetUserIdFromToken()
         }
 
         // ---------------------- GET ALL USER TRANSACTIONS ----------------------
-        [HttpGet]
-        public async Task<IActionResult> Get(
-            int pageNumber = 1, 
-            int pageSize = 10, 
-            string? sortBy = "Datetime",
-            string? sortDirection = "desc")
-        {
-            int userId = GetUserIdFromToken();
-            if (userId == 0) return Unauthorized();
+       [HttpGet]
+public async Task<IActionResult> Get(
+    int pageNumber = 1,
+    int pageSize = 10,
+    string? sortBy = "Datetime",
+    string? sortDirection = "desc")
+{
+    int userId = GetUserIdFromToken();
+    if (userId == 0) return Unauthorized();
 
-            var result = await _service.GetPagedByUserAsync(userId, pageNumber, pageSize, sortBy, sortDirection);
-            return Ok(result);
-        }
+    var result = await _service.GetPagedByUserAsync(
+        userId, pageNumber, pageSize, sortBy, sortDirection);
+
+    return Ok(result);
+}
 
         // ---------------------- GET BY ID ----------------------
         [HttpGet("{id}")]

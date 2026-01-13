@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom"; 
 import { addTransaction, getCategories } from "../Api/auth";
 import "../Styles/Transaction.css";
-import Sidebar from "../Components/Sidebar";
+
 
 const AddTransaction = () => {
   const navigate = useNavigate(); 
@@ -59,10 +59,7 @@ const AddTransaction = () => {
 
   return ( 
     
-    <div className="layout">
-        {/* Sidebar */}
-        <Sidebar />
-
+    
     <div className="page-wrapper">
       <div className="card">
         <h2>Add Transaction</h2>
@@ -120,7 +117,7 @@ const AddTransaction = () => {
         </form>
       </div>
     </div>
-    </div>
+   
  
 );
 

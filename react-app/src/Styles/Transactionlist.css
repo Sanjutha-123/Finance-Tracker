@@ -156,3 +156,10 @@
 .action-btn.create:hover {
   background-color: #16a34a; /* green-600 */
 }
+/* Make header look clickable */
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  position: relative;
+}
+

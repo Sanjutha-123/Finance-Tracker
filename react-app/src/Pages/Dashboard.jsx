@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Sidebar from "../Components/Sidebar";
 import { getTransactions, getCategories } from "../Api/auth";
 import "../Styles/Dashboard.css";
 
@@ -111,8 +110,7 @@ export default function Dashboard() {
   /* ================= UI ================= */
 
   return (
-    <div className="layout">
-      <Sidebar />
+   
 
       <div className="content">
         <h1>Dashboard</h1>
@@ -176,6 +174,6 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-    </div>
+  
   );
 }

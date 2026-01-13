@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import Sidebar from "../Components/Sidebar";
+
 import {
   getCategories,
   getTransactionById,
@@ -83,11 +83,8 @@ const EditTransaction = () => {
   };
 
   return (
-    <div className="layout">
-      {/* Sidebar */}
-      <Sidebar />
-
-      {/* Page Content */}
+    
+      
       <div className="page-wrapper">
         <div className="card">
           <h2 className="text-center">Edit Transaction</h2>
@@ -144,7 +141,7 @@ const EditTransaction = () => {
           </form>
         </div>
       </div>
-    </div>
+  
   );
 };
 

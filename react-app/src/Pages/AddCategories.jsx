@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { getCategories, addCategory } from "../Api/auth";
-import Sidebar from "../Components/Sidebar";
+
 import "../Styles/Category.css";
 
 export default function AddCategory() {
@@ -53,9 +53,7 @@ const filteredCategories = categories.filter((c) => {
 });
 
   return (
-    <div className="layout">
-      <Sidebar />
-
+    
       <div className="category-main">
         {/* Add Category Form */}
         <div className="add-category-top">
@@ -120,6 +118,6 @@ const filteredCategories = categories.filter((c) => {
           </tbody>
         </table>
       </div>
-    </div>
+   
   );
 }

@@ -35,21 +35,49 @@ namespace FinanceTrackerApi.Data
     return transaction;
 }
 
-        public async Task<IEnumerable<Transaction>> GetPagedByUserAsync(int userId, int pageNumber, int pageSize, string? sortBy, string? sortDirection)
-        {
-            var query = _context.Transactions.Where(t => t.UserId == userId);
+     public async Task<PagedResult<Transaction>> GetPagedByUserAsync(
+    int userId,
+    int pageNumber,
+    int pageSize,
+    string? sortBy,
+    string? sortDirection)
+{
+    var query = _context.Transactions
+        .Where(t => t.UserId == userId);
 
-            if (!string.IsNullOrEmpty(sortBy))
-            {
-                // Simple dynamic sorting
-                if (sortDirection?.ToLower() == "desc")
-                    query = query.OrderByDescending(e => EF.Property<object>(e, sortBy));
-                else
-                    query = query.OrderBy(e => EF.Property<object>(e, sortBy));
-            }
+    // ✅ SORTING
+    if (!string.IsNullOrWhiteSpace(sortBy))
+    {
+        if (sortDirection?.ToLower() == "asc")
+            query = query.OrderBy(t => EF.Property<object>(t, sortBy));
+        else
+            query = query.OrderByDescending(t => EF.Property<object>(t, sortBy));
+    }
+    else
+    {
+        // Default sort
+        query = query.OrderByDescending(t => t.Datetime);
+    }
 
-            return await query.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToListAsync();
-        }
+    // ✅ TOTAL COUNT
+    var totalItems = await query.CountAsync();
+
+    // ✅ PAGINATION
+    var items = await query
+        .Skip((pageNumber - 1) * pageSize)
+        .Take(pageSize)
+        .ToListAsync();
+
+    return new PagedResult<Transaction>
+    {
+        Items = items,
+        PageNumber = pageNumber,
+        PageSize = pageSize,
+        TotalItems = totalItems,
+        TotalPages = (int)Math.Ceiling(totalItems / (double)pageSize)
+    };
+}
+
 
         public async Task<Transaction?> GetByIdAsync(int id, int userId)
         {
@@ -98,9 +126,6 @@ namespace FinanceTrackerApi.Data
             return await query.ToListAsync();
         }
 
-        Task<PagedResult<Transaction>> ITransactionService.GetPagedByUserAsync(int userId, int pageNumber, int pageSize, string? sortBy, string? sortDirection)
-        {
-            throw new NotImplementedException();
-        }
+    
     }
 }
