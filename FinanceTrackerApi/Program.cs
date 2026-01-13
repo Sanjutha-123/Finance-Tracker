@@ -5,6 +5,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 
+using Microsoft.AspNetCore.RateLimiting;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // ------------------------
@@ -37,6 +39,30 @@ builder.Services.AddScoped<ITransactionService, TransactionService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IMonthlySummaryService, MonthlySummaryService>();
 builder.Services.AddMemoryCache();
+
+
+
+
+builder.Services.AddRateLimiter(options =>
+{
+    options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+
+    options.AddFixedWindowLimiter("basic-limit", limiterOptions =>
+    {
+        limiterOptions.PermitLimit = 5;                 // 5 requests
+        limiterOptions.Window = TimeSpan.FromMinutes(1); // per 1 minute
+        limiterOptions.QueueLimit = 0;
+    });
+});
+
+
+
+
+
+
+
+
+
 
 // ------------------------
 // JWT Configuration
@@ -126,6 +152,7 @@ app.UseAuthorization();
 // Map Controllers
 // ------------------------
 app.MapControllers();
+app.UseRateLimiter();
 
 // ------------------------
 // Run
