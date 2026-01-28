@@ -15,3 +15,4 @@ public interface ITransactionService
     Task<bool> DeleteTransaction(int id, int userId);
     Task<IEnumerable<Transaction>> Filter(int userId, DateTime? start, DateTime? end, int? categoryId, string? type);
 }
+
